@@ -78,10 +78,10 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <div class="flex items-center justify-between h-6 mb-2">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mulai Kerja</label>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mulai</label>
                         <span id="workDurationDisplay" class="px-2.5 py-0.5 text-[11px] font-bold text-blue-600 bg-blue-50 border border-blue-200 rounded-full whitespace-nowrap"></span>
                     </div>
-                    <input type="date" id="tanggal" class="form-input" required>
+                    <input type="date" id="mulai" class="form-input" required>
                 </div>
                 <div>
                     <div class="flex items-center justify-between h-6 mb-2">
@@ -491,7 +491,7 @@
 
         // 2. Fungsi memperbarui indikator durasi kerja dan sisa masa kontrak
         function updateContractCalculations() {
-            const rawMulai = document.getElementById('tanggal').value;
+            const rawMulai = document.getElementById('mulai').value;
             const rawSelesai = document.getElementById('selesai').value;
             const nowStr = new Date().toISOString().split('T')[0];
 
