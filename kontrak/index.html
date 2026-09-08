@@ -17,7 +17,8 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; scroll-behavior: smooth; }
         
         .arsip-card { transition: all 0.2s ease; border: 1px solid #e2e8f0; background: white; cursor: default; }
-        .arsip-card:hover { transform: translateY(-2px); border-color: #f59e0b; box-shadow: 0 10px 20px -10px rgba(245, 158, 11, 0.2); }
+        /* UBAH: Hover card ke warna biru (#2563eb / blue-600) */
+        .arsip-card:hover { transform: translateY(-2px); border-color: #2563eb; box-shadow: 0 10px 20px -10px rgba(37, 99, 235, 0.2); }
 
         .markdown-body { white-space: normal; word-wrap: break-word; }
         .markdown-body p { margin-bottom: 0.5rem; }
@@ -26,16 +27,18 @@
         .markdown-body ol { list-style-type: decimal; padding-left: 1.25rem; margin-bottom: 0.5rem; }
         .markdown-body strong { font-weight: 700; color: #0f172a; }
         .markdown-body em { font-style: italic; }
-        .markdown-body a { color: #d97706; text-decoration: underline; font-weight: 600; }
-        /* Styling Kutipan (Blockquote >) agar sama dengan Triple Quote */
+        /* UBAH: Link Markdown ke biru */
+        .markdown-body a { color: #2563eb; text-decoration: underline; font-weight: 600; }
+        
+        /* Styling Kutipan (Blockquote >) - UBAH: Latar & garis kiri ke aksen biru */
         .markdown-body blockquote {
-            background-color: #fffbeb !important; /* Amber sangat muda */
-            color: #09090b !important;            /* Hitam pekat */
+            background-color: #eff6ff !important; /* Blue 50 */
+            color: #09090b !important;            
             padding: 1rem !important;
             border-radius: 0.75rem !important;
-            border: 1px solid #fef3c7 !important;
-            border-left: 4px solid #f59e0b !important; /* Aksen garis kiri amber khas kutipan */
-            font-size: 0.8rem !important;        /* Ukuran teks disamakan */
+            border: 1px solid #dbeafe !important; /* Blue 100 */
+            border-left: 4px solid #2563eb !important; /* Blue 600 */
+            font-size: 0.8rem !important;        
             margin-bottom: 0.75rem !important;
         }
 
@@ -50,35 +53,35 @@
         .markdown-body h2 { font-size: 0.875rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem; }
         .markdown-body h3 { font-size: 0.8rem; font-weight: 700; color: #1e293b; margin-bottom: 0.25rem; }
 
-        /* --- STYLE KODE / MONOSPACE & INLINE CODE (DISAMAKAN & AUTO-WRAP) --- */
+        /* UBAH: Inline Code & Code Block ke aksen biru */
         .markdown-body code:not(pre code), 
         .markdown-body div code, 
         .markdown-body p code, 
         .markdown-body li code,
         .markdown-body td code,
         .markdown-body th code {
-            background-color: #fffbeb !important; /* Amber sangat muda (amber-50) */
-            color: #09090b !important;            /* Hitam pekat (zinc-900) */
-            border: 1px solid #fef3c7 !important; /* Border tipis amber lembut */
+            background-color: #eff6ff !important; /* Blue 50 */
+            color: #09090b !important;            
+            border: 1px solid #dbeafe !important; /* Blue 100 */
             padding: 0.15rem 0.4rem !important;  
             border-radius: 0.375rem !important;   
             font-size: 0.8em !important;
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
             font-weight: 500 !important;
-            white-space: pre-wrap !important;     /* Auto wrap teks panjang */
-            word-break: break-word !important;    /* Memecah kata panjang agar tidak overflow */
+            white-space: pre-wrap !important;     
+            word-break: break-word !important;    
             overflow-wrap: break-word !important;
         }
         
-        /* Blok Kode (Pre) - Amber Ultra-Muda & Teks Hitam Pekat */
+        /* Blok Kode (Pre) - UBAH: Biru Ultra-Muda */
         .markdown-body pre { 
-            background-color: #fffbeb; 
+            background-color: #eff6ff; 
             color: #09090b; 
             padding: 1rem; 
             border-radius: 0.75rem; 
             overflow-x: auto; 
             margin-bottom: 0.75rem; 
-            border: 1px solid #fef3c7; 
+            border: 1px solid #dbeafe; 
         }
         
         .markdown-body pre code { 
