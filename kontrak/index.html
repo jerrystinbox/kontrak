@@ -600,49 +600,52 @@
                         <!-- JUDUL -->
                         <h3 class="text-base font-extrabold text-slate-900 leading-snug tracking-tight mb-3 hover:text-amber-600 transition-colors">${item.judul || 'Tanpa Judul'}</h3>
 
-                        <!-- INFORMASI PERIODE SEWA & SISA MASA KONTRAK (SEJAJAR) -->
-                        <div class="grid grid-cols-1 ${sisaMasaKontrakText ? 'sm:grid-cols-2' : ''} gap-2.5 mb-3 p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-medium text-slate-700">
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="calendar" class="w-4 h-4 text-amber-600 shrink-0"></i>
-                                <div>
-                                    <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Periode Sewa</span>
-                                    <span class="font-bold text-slate-800">${periodeSewaText}</span>
-                                </div>
-                            </div>
-                            ${sisaMasaKontrakText ? `
-                                <div class="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-200/60 sm:pl-2.5">
-                                    <i data-lucide="clock" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                        <!-- WADAH TUNGGAL: PERIODE, SISA MASA KONTRAK, HARGA SEWA & JAMINAN -->
+                        <div class="mb-3 p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-medium text-slate-700 space-y-2.5">
+                            <!-- BARIS 1: PERIODE SEWA & SISA MASA KONTRAK -->
+                            <div class="grid grid-cols-1 ${sisaMasaKontrakText ? 'sm:grid-cols-2' : ''} gap-2.5">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="calendar" class="w-4 h-4 text-amber-600 shrink-0"></i>
                                     <div>
-                                        <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Sisa Masa Kontrak</span>
-                                        <span class="font-bold text-slate-800">${sisaMasaKontrakText}</span>
+                                        <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Periode Sewa</span>
+                                        <span class="font-bold text-slate-800">${periodeSewaText}</span>
                                     </div>
+                                </div>
+                                ${sisaMasaKontrakText ? `
+                                    <div class="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-200/60 sm:pl-2.5">
+                                        <i data-lucide="clock" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                                        <div>
+                                            <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Sisa Masa Kontrak</span>
+                                            <span class="font-bold text-slate-800">${sisaMasaKontrakText}</span>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <!-- BARIS 2: HARGA SEWA & JAMINAN (JIKA ADA) -->
+                            ${(item.harga_sewa || item.jaminan) ? `
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2.5 border-t border-slate-200/60">
+                                    ${item.harga_sewa ? `
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="tag" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                                            <div>
+                                                <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Harga Sewa</span>
+                                                <span class="font-bold text-slate-800">${item.harga_sewa}</span>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    ${item.jaminan ? `
+                                        <div class="flex items-center gap-2 ${item.harga_sewa ? 'pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-200/60 sm:pl-2.5' : ''}">
+                                            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                            <div>
+                                                <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Jaminan</span>
+                                                <span class="font-bold text-slate-800">${item.jaminan}</span>
+                                            </div>
+                                        </div>
+                                    ` : ''}
                                 </div>
                             ` : ''}
                         </div>
-
-                        <!-- GRID RINCIAN: HARGA SEWA & JAMINAN -->
-                        ${(item.harga_sewa || item.jaminan) ? `
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs font-semibold">
-                                ${item.harga_sewa ? `
-                                    <div class="flex items-center gap-2 text-slate-700">
-                                        <i data-lucide="tag" class="w-4 h-4 text-amber-600 shrink-0"></i>
-                                        <div>
-                                            <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Harga Sewa</span>
-                                            <span class="font-bold text-slate-800">${item.harga_sewa}</span>
-                                        </div>
-                                    </div>
-                                ` : ''}
-                                ${item.jaminan ? `
-                                    <div class="flex items-center gap-2 text-slate-700">
-                                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-                                        <div>
-                                            <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Jaminan</span>
-                                            <span class="font-bold text-slate-800">${item.jaminan}</span>
-                                        </div>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        ` : ''}
 
                         <!-- KETERANGAN (Markdown) -->
                         ${item.keterangan ? `
