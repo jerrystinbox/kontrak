@@ -49,29 +49,29 @@
         <form id="editForm" class="hidden bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xl shadow-slate-200/50 space-y-5">
             <input type="hidden" id="pageId">
 
-            <!-- ID Rekam & Judul Kontrak -->
+            <!-- ID Rekam & Status Kontrak (Satu Baris, Kompak) -->
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
                 <div class="sm:col-span-3">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">ID Rekam</label>
                     <input type="text" id="rec_id" placeholder="ID..." class="form-input !bg-slate-200/70 !text-slate-500 cursor-not-allowed select-none" readonly tabindex="-1">
                 </div>
             
-                <div class="sm:col-span-9">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Judul Kontrak</label>
-                    <input type="text" id="judul" placeholder="Masukkan judul kontrak..." class="form-input !font-black !text-black" required>
+                <div class="sm:col-span-4">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status Kontrak</label>
+                    <select id="status" class="form-input">
+                        <option value="">-- Pilih Status --</option>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Selesai">Selesai</option>
+                        <option value="Perpanjangan">Perpanjangan</option>
+                        <option value="Batal">Batal</option>
+                    </select>
                 </div>
             </div>
-            
-            <!-- Status Kontrak -->
+
+            <!-- Judul Kontrak (Baris Baru, Full-Width) -->
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status Kontrak</label>
-                <select id="status" class="form-input">
-                    <option value="">-- Pilih Status --</option>
-                    <option value="Aktif">Aktif</option>
-                    <option value="Selesai">Selesai</option>
-                    <option value="Perpanjangan">Perpanjangan</option>
-                    <option value="Batal">Batal</option>
-                </select>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Judul Kontrak</label>
+                <input type="text" id="judul" placeholder="Masukkan judul kontrak..." class="form-input !font-black !text-black" required>
             </div>
 
             <!-- Tanggal Mulai & Tanggal Selesai -->
