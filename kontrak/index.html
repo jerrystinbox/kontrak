@@ -388,6 +388,52 @@
             return `${dayName}, ${date} ${month} ${year}`;
         }
 
+        // --- HELPER BARU: FORMAT TANGGAL SHORT (ddd, dd/mm/yyyy) & KALKULASI DURASI ---
+        function formatDateShort(dateStr) {
+            if (!dateStr) return "-";
+            const d = new Date(dateStr + 'T00:00:00');
+            if (isNaN(d.getTime())) return dateStr;
+            const days = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+            const dayName = days[d.getDay()];
+            const date = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${dayName}, ${date}/${month}/${year}`;
+        }
+
+        function calculateDateDiff(startDateStr, endDateStr) {
+            if (!startDateStr || !endDateStr) return "";
+            const start = new Date(startDateStr + 'T00:00:00');
+            const end = new Date(endDateStr + 'T00:00:00');
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) return "";
+
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+
+            if (end < start) return "0 hr";
+
+            let years = end.getFullYear() - start.getFullYear();
+            let months = end.getMonth() - start.getMonth();
+            let days = end.getDate() - start.getDate();
+
+            if (days < 0) {
+                months--;
+                const prevMonthLastDay = new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+                days += prevMonthLastDay;
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            let parts = [];
+            if (years > 0) parts.push(`${years} thn`);
+            if (months > 0) parts.push(`${months} bln`);
+            if (days > 0) parts.push(`${days} hr`);
+
+            return parts.length > 0 ? parts.join(' ') : "0 hr";
+        }
+
         function formatDateTimeReadable(isoString) {
             if (!isoString) return "";
             const d = new Date(isoString);
@@ -464,10 +510,36 @@
             const hasDocs = item.dokumentasi && item.dokumentasi.length > 0;
             const docsCount = hasDocs ? item.dokumentasi.length : 0;
             
-            // 1. Format Rentang Tanggal (MULAI & SELESAI)
-            const tglMulai = item.mulai ? formatDateReadable(item.mulai) : (item.tanggal ? formatDateReadable(item.tanggal) : '-');
-            const tglSelesai = item.selesai ? formatDateReadable(item.selesai) : null;
-            const dateRangeText = tglSelesai ? `${tglMulai} s/d ${tglSelesai}` : tglMulai;
+            // 1. Format Periode Sewa & Sisa Masa Kontrak
+            const rawMulai = item.mulai || item.tanggal || '';
+            const rawSelesai = item.selesai || '';
+            const tglMulaiFmt = rawMulai ? formatDateShort(rawMulai) : '-';
+            const nowStr = new Date().toISOString().split('T')[0];
+
+            let periodeSewaText = '';
+            let sisaMasaKontrakText = null;
+
+            if (rawSelesai) {
+                const tglSelesaiFmt = formatDateShort(rawSelesai);
+                const durasi = calculateDateDiff(rawMulai, rawSelesai);
+                periodeSewaText = `${tglMulaiFmt} sd ${tglSelesaiFmt} ${durasi ? `(${durasi})` : ''}`;
+
+                const dSelesai = new Date(rawSelesai + 'T00:00:00');
+                const dNow = new Date(nowStr + 'T00:00:00');
+
+                if (dSelesai >= dNow) {
+                    const sisa = calculateDateDiff(nowStr, rawSelesai);
+                    sisaMasaKontrakText = sisa || 'Hari ini berakhir';
+                } else {
+                    const lewat = calculateDateDiff(rawSelesai, nowStr);
+                    sisaMasaKontrakText = `Sudah Berakhir ${lewat ? `(lewat ${lewat})` : ''}`;
+                }
+            } else {
+                // Tanggal selesai kosong: Hitung durasi berjalan dari tanggal mulai sampai hari ini
+                const durasiBerjalan = rawMulai ? calculateDateDiff(rawMulai, nowStr) : '';
+                periodeSewaText = `${tglMulaiFmt} ${durasiBerjalan ? `(${durasiBerjalan})` : ''}`;
+                sisaMasaKontrakText = null; // Sembunyikan sisa masa kontrak
+            }
 
             // 2. Format Teks Markdown (KETERANGAN & MEMO)
             const formattedKeterangan = parseMarkdownContent(item.keterangan);
@@ -492,7 +564,7 @@
             return `
                 <div class="arsip-card p-5 rounded-[2rem] shadow-sm flex flex-col justify-between">
                     <div>
-                        <!-- BARIS ATAS: REC_ID, Status, Tanggal, dan Akses/Aksi -->
+                        <!-- BARIS ATAS: REC_ID, Status, dan Akses/Aksi -->
                         <div class="flex flex-wrap justify-between items-center mb-3 gap-2 pb-2.5 border-b border-slate-100">
                             <div class="flex items-center gap-2 flex-wrap">
                                 ${item.rec_id ? `
@@ -503,10 +575,6 @@
                                 <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md border ${statusColor}">
                                     ${statusLabel}
                                 </span>
-                                <div class="flex items-center gap-1 text-[11px] font-extrabold text-slate-600">
-                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
-                                    <span>${dateRangeText}</span>
-                                </div>
                             </div>
                             
                             <div class="flex items-center gap-2 shrink-0" onclick="event.stopPropagation()">
@@ -531,6 +599,26 @@
 
                         <!-- JUDUL -->
                         <h3 class="text-base font-extrabold text-slate-900 leading-snug tracking-tight mb-3 hover:text-amber-600 transition-colors">${item.judul || 'Tanpa Judul'}</h3>
+
+                        <!-- INFORMASI PERIODE SEWA & SISA MASA KONTRAK -->
+                        <div class="mb-3 p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs space-y-1.5 font-medium text-slate-700">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="calendar" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Periode Sewa</span>
+                                    <span class="font-bold text-slate-800">${periodeSewaText}</span>
+                                </div>
+                            </div>
+                            ${sisaMasaKontrakText ? `
+                                <div class="flex items-center gap-2 pt-1.5 border-t border-slate-200/60">
+                                    <i data-lucide="clock" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                                    <div>
+                                        <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Sisa Masa Kontrak</span>
+                                        <span class="font-bold text-slate-800">${sisaMasaKontrakText}</span>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
 
                         <!-- GRID RINCIAN: HARGA SEWA & JAMINAN -->
                         ${(item.harga_sewa || item.jaminan) ? `
