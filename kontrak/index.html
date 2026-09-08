@@ -410,37 +410,42 @@
             return `${dayName}, ${date}/${month}/${year}`;
         }
 
-        function calculateDateDiff(startDateStr, endDateStr) {
-            if (!startDateStr || !endDateStr) return "";
-            const start = new Date(startDateStr + 'T00:00:00');
-            const end = new Date(endDateStr + 'T00:00:00');
-            if (isNaN(start.getTime()) || isNaN(end.getTime())) return "";
-
-            start.setHours(0, 0, 0, 0);
-            end.setHours(0, 0, 0, 0);
-
-            if (end < start) return "0 hr";
-
-            let years = end.getFullYear() - start.getFullYear();
-            let months = end.getMonth() - start.getMonth();
-            let days = end.getDate() - start.getDate();
-
-            if (days < 0) {
-                months--;
-                const prevMonthLastDay = new Date(end.getFullYear(), end.getMonth(), 0).getDate();
-                days += prevMonthLastDay;
+        function getTimeDiff(start, end, addOneDay = false) {
+            if (!start || !end) return "-";
+            
+            const d1 = typeof start === 'string' && !start.includes('T') ? new Date(start + 'T00:00:00') : new Date(start);
+            const d2 = typeof end === 'string' && !end.includes('T') ? new Date(end + 'T00:00:00') : new Date(end);
+            
+            if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return "-";
+            
+            d1.setHours(0, 0, 0, 0);
+            d2.setHours(0, 0, 0, 0);
+            
+            if (addOneDay) {
+                d2.setDate(d2.getDate() + 1);
             }
-            if (months < 0) {
-                years--;
-                months += 12;
+            
+            if (d1 > d2) return "Selesai";
+            
+            let years = d2.getFullYear() - d1.getFullYear();
+            let months = d2.getMonth() - d1.getMonth();
+            let days = d2.getDate() - d1.getDate();
+            
+            if (days < 0) { 
+                months--; 
+                days += new Date(d2.getFullYear(), d2.getMonth(), 0).getDate(); 
             }
-
-            let parts = [];
-            if (years > 0) parts.push(`${years} thn`);
-            if (months > 0) parts.push(`${months} bln`);
-            if (days > 0) parts.push(`${days} hr`);
-
-            return parts.length > 0 ? parts.join(' ') : "0 hr";
+            if (months < 0) { 
+                years--; 
+                months += 12; 
+            }
+            
+            let res = [];
+            if (years > 0) res.push(`${years} tahun`);
+            if (months > 0) res.push(`${months} bulan`);
+            if (days > 0) res.push(`${days} hari`);
+            
+            return res.join(' ') || "0 hari";
         }
 
         function formatDateTimeReadable(isoString) {
@@ -530,23 +535,20 @@
 
             if (rawSelesai) {
                 const tglSelesaiFmt = formatDateShort(rawSelesai);
-                const durasi = calculateDateDiff(rawMulai, rawSelesai);
-                periodeSewaText = `${tglMulaiFmt} sd ${tglSelesaiFmt} ${durasi ? `(${durasi})` : ''}`;
+                const durasi = getTimeDiff(rawMulai, rawSelesai, true);
+                periodeSewaText = `${tglMulaiFmt} sd ${tglSelesaiFmt} ${durasi && durasi !== '-' ? `(${durasi})` : ''}`;
 
-                const dSelesai = new Date(rawSelesai + 'T00:00:00');
-                const dNow = new Date(nowStr + 'T00:00:00');
-
-                if (dSelesai >= dNow) {
-                    const sisa = calculateDateDiff(nowStr, rawSelesai);
-                    sisaMasaKontrakText = sisa || 'Hari ini berakhir';
+                const sisa = getTimeDiff(nowStr, rawSelesai, true);
+                if (sisa === "Selesai") {
+                    const lewat = getTimeDiff(rawSelesai, nowStr);
+                    sisaMasaKontrakText = `Sudah Berakhir ${lewat && lewat !== '-' && lewat !== '0 hari' ? `(lewat ${lewat})` : ''}`;
                 } else {
-                    const lewat = calculateDateDiff(rawSelesai, nowStr);
-                    sisaMasaKontrakText = `Sudah Berakhir ${lewat ? `(lewat ${lewat})` : ''}`;
+                    sisaMasaKontrakText = sisa;
                 }
             } else {
                 // Tanggal selesai kosong: Hitung durasi berjalan dari tanggal mulai sampai hari ini
-                const durasiBerjalan = rawMulai ? calculateDateDiff(rawMulai, nowStr) : '';
-                periodeSewaText = `${tglMulaiFmt} ${durasiBerjalan ? `(${durasiBerjalan})` : ''}`;
+                const durasiBerjalan = rawMulai ? getTimeDiff(rawMulai, nowStr, true) : '';
+                periodeSewaText = `${tglMulaiFmt} ${durasiBerjalan && durasiBerjalan !== '-' ? `(${durasiBerjalan})` : ''}`;
                 sisaMasaKontrakText = null; // Sembunyikan sisa masa kontrak
             }
 
@@ -623,7 +625,6 @@
                                 </div>
                                 ${sisaMasaKontrakText ? `
                                     <div class="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-200/60 sm:pl-2.5">
-                                        <!-- UBAH: Icon Clock ke text-blue-600 -->
                                         <i data-lucide="clock" class="w-4 h-4 text-blue-600 shrink-0"></i>
                                         <div>
                                             <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Sisa Masa Kontrak</span>
