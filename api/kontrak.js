@@ -12,9 +12,9 @@ const SECRET_KEY = crypto.createHash('sha256').update(SECRET_KEY_RAW).digest(); 
 
 // Konfigurasi Mapping Database dan PIN
 const CONFIG = {   
-    hijau55:    { BusinessID: "XO",    pageTitle: "Karyawan XO 🔒︎",         db: process.env.NOTION_DB_HR_XO,    pinAdmin: process.env.PIN_ADMIN, pinInsert: process.env.PIN_ADMIN },
-    xo22:       { BusinessID: "XO",    pageTitle: "Karyawan XO 🔍︎",         db: process.env.NOTION_DB_HR_XO,    pinAdmin: "2095231",             pinInsert: "2095231" },
-    xo42:       { BusinessID: "XO",    pageTitle: "Karyawan XO",            db: process.env.NOTION_DB_HR_XO,    pinAdmin: "251011",              pinInsert: "251011" }
+    gg55:    { BusinessID: "GG",    pageTitle: "Kontrak Kantor Hijau 🔒︎",         db: process.env.NOTION_DB_KONTRAK_KANTOR,    pinAdmin: process.env.PIN_ADMIN, pinInsert: process.env.PIN_ADMIN },
+    gg22:    { BusinessID: "GG",    pageTitle: "Kontrak Kantor Hijau 🔍︎",         db: process.env.NOTION_DB_KONTRAK_KANTOR,    pinAdmin: "2095231",             pinInsert: "2095231" },
+    gg42:    { BusinessID: "GG",    pageTitle: "Kontrak Kantor Hijau",            db: process.env.NOTION_DB_KONTRAK_KANTOR,    pinAdmin: "251011",              pinInsert: "251011" }
 };
 
 export const config = {
