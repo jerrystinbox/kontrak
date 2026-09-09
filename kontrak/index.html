@@ -611,30 +611,39 @@
                         <!-- JUDUL -->
                         <h3 class="text-base font-extrabold text-slate-900 leading-snug tracking-tight mb-3 hover:text-blue-600 transition-colors">${item.judul || 'Tanpa Judul'}</h3>
 
-                        <!-- BARIS INFORMASI BARU: PENYEWA & PROPERTY (ROLLUP) -->
-                        ${(item.nama_penyewa || item.nama_property) ? `
-                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mb-3 text-xs font-semibold text-slate-600">
-                                ${item.nama_penyewa ? `
-                                    <div class="flex items-center gap-1.5">
-                                        <i data-lucide="user" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
-                                        <span>${item.nama_penyewa}</span>
-                                    </div>
-                                ` : ''}
-                                ${item.nama_property ? `
-                                    <div class="flex items-center gap-1.5">
-                                        <i data-lucide="building" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
-                                        <span>${item.nama_property} ${item.alamat_property ? `<span class="text-slate-400 font-normal">(${item.alamat_property})</span>` : ''}</span>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        ` : ''}
-
-                        <!-- WADAH TUNGGAL: PERIODE, SISA MASA KONTRAK, HARGA SEWA & JAMINAN -->
+                        <!-- WADAH TUNGGAL: PENYEWA & PROPERTY, PERIODE, SISA MASA KONTRAK, HARGA SEWA & JAMINAN -->
                         <div class="mb-3 p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-medium text-slate-700 space-y-2.5">
-                            <!-- BARIS 1: PERIODE SEWA & SISA MASA KONTRAK -->
+                            
+                            <!-- BARIS 1: PENYEWA & PROPERTY / ALAMAT (DIPOSISIKAN DI ATAS PERIODE SEWA) -->
+                            ${(item.nama_penyewa || item.nama_property || item.alamat_property) ? `
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pb-2.5 border-b border-slate-200/60">
+                                    ${item.nama_penyewa ? `
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="user" class="w-4 h-4 text-blue-600 shrink-0"></i>
+                                            <div>
+                                                <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Penyewa</span>
+                                                <span class="font-bold text-slate-800">${item.nama_penyewa}</span>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    ${(item.nama_property || item.alamat_property) ? `
+                                        <div class="flex items-center gap-2 ${item.nama_penyewa ? 'pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-slate-200/60 sm:pl-2.5' : ''}">
+                                            <i data-lucide="building" class="w-4 h-4 text-blue-600 shrink-0"></i>
+                                            <div>
+                                                <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Property & Alamat</span>
+                                                <span class="font-bold text-slate-800">
+                                                    ${item.nama_property || ''}
+                                                    ${item.alamat_property ? `<span class="text-slate-500 font-medium">${item.nama_property ? `(${item.alamat_property})` : item.alamat_property}</span>` : ''}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+
+                            <!-- BARIS 2: PERIODE SEWA & SISA MASA KONTRAK -->
                             <div class="grid grid-cols-1 ${sisaMasaKontrakText ? 'sm:grid-cols-2' : ''} gap-2.5">
                                 <div class="flex items-center gap-2">
-                                    <!-- UBAH: Icon Calendar ke text-blue-600 -->
                                     <i data-lucide="calendar" class="w-4 h-4 text-blue-600 shrink-0"></i>
                                     <div>
                                         <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Periode Sewa</span>
