@@ -690,7 +690,7 @@
                 document.getElementById('pinModal').classList.remove('hidden');
                 setTimeout(() => document.getElementById('inputPinAdmin')?.focus(), 50); // <-- TAMBAHKAN FOCUS
                 lucide.createIcons();
-                // return;
+                return;
             }
 
             isLoading = true;
@@ -821,29 +821,30 @@
             if (currentNextCursor) fetchArsipData(currentNextCursor, true);
         }
 
-        // --- HAPUS fungsi renderGrid(data) beserta isinya ---
-        // --- HAPUS fungsi async initialFetch() beserta isinya ---
-
         function handleFilterChange() {
             const start = document.getElementById('filterStartDate').value;
             const end = document.getElementById('filterEndDate').value;
             const clearBtn = document.getElementById('clearDateContainer');
             if (start || end) clearBtn.classList.remove('hidden');
             else clearBtn.classList.add('hidden');
-            fetchArsipData(); // <-- UBAH initialFetch menjadi fetchArsipData
+            fetchArsipData(); 
         }
 
         function clearDateFilter() {
             document.getElementById('filterStartDate').value = '';
             document.getElementById('filterEndDate').value = '';
             document.getElementById('clearDateContainer').classList.add('hidden');
-            fetchArsipData(); // <-- UBAH initialFetch menjadi fetchArsipData
+            fetchArsipData(); 
         }
 
         function clearSearch() {
             document.getElementById('filterKeyword').value = '';
-            fetchArsipData(); // <-- UBAH initialFetch menjadi fetchArsipData
         }
+
+        // Inisialisasi data & cek sesi PIN saat halaman pertama kali dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchArsipData();
+        });
         
         function getFileIcon(url, name) {
             const ext = (name || url || '').split('.').pop().toLowerCase().split('?')[0];
