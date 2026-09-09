@@ -329,7 +329,15 @@
             const pinModal = document.getElementById('pinModal');
             if (pinModal) {
                 pinModal.classList.remove('hidden');
-                setTimeout(() => document.getElementById('inputPinAdmin')?.focus(), 50);
+                
+                // TAMBAHKAN: Bersihkan nilai input PIN & sembunyikan pesan error saat logout
+                const pinInput = document.getElementById('inputPinAdmin');
+                if (pinInput) pinInput.value = '';
+    
+                const errEl = document.getElementById('pinErrorMsg');
+                if (errEl) errEl.classList.add('hidden');
+    
+                setTimeout(() => pinInput?.focus(), 50);
             }
             
             if (typeof lucide !== 'undefined') lucide.createIcons();
