@@ -397,13 +397,7 @@
                         const opt = document.createElement('option');
                         opt.value = item.id;
                         opt.textContent = `${item.nama}${item.daerah ? ' - ' + item.daerah : ''}`;
-                        
-                        // Perbandingan fleksibel (String, Array, Object)
-                        const isMatch = Array.isArray(selectedPropertyId)
-                            ? selectedPropertyId.some(id => (typeof id === 'object' ? id?.id : id) === item.id)
-                            : (typeof selectedPropertyId === 'object' && selectedPropertyId !== null ? selectedPropertyId.id : selectedPropertyId) === item.id;
-
-                        if (isMatch) opt.selected = true;
+                        if (item.id === selectedPropertyId) opt.selected = true;
                         selectEl.appendChild(opt);
                     });
                 } else {
@@ -429,13 +423,7 @@
                         // Format Label: Nama Penyewa (PIC jika ada)
                         const labelText = item.nama + (item.pic ? ` (${item.pic})` : '');
                         opt.textContent = labelText;
-                        
-                        // Perbandingan fleksibel (String, Array, Object)
-                        const isMatch = Array.isArray(selectedPenyewaId)
-                            ? selectedPenyewaId.some(id => (typeof id === 'object' ? id?.id : id) === item.id)
-                            : (typeof selectedPenyewaId === 'object' && selectedPenyewaId !== null ? selectedPenyewaId.id : selectedPenyewaId) === item.id;
-
-                        if (isMatch) opt.selected = true;
+                        if (item.id === selectedPenyewaId) opt.selected = true;
                         selectEl.appendChild(opt);
                     });
                 } else {
