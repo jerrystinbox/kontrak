@@ -605,6 +605,18 @@
                 statusColor = 'bg-amber-50 text-amber-700 border-amber-200';
             }
 
+            // --- FORMAT DATA PENYEWA (NAMA, PIC, NO HP) ---
+            const basePenyewa = item.nama_penyewa || item.nama || '';
+            let penyewaFormatted = basePenyewa;
+            if (basePenyewa) {
+                const infoPenyewa = [];
+                if (item.pic) infoPenyewa.push(`👤 ${item.pic}`);
+                if (item.no_hp) infoPenyewa.push(`📞 ${item.no_hp}`);
+                if (infoPenyewa.length > 0) {
+                    penyewaFormatted += ` (${infoPenyewa.join(', ')})`;
+                }
+            }
+
             return `
                 <div class="arsip-card p-5 rounded-[2rem] shadow-sm flex flex-col justify-between">
                     <div>
@@ -648,14 +660,14 @@
                         <div class="mb-3 p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-medium text-slate-700 space-y-2.5">
                             
                             <!-- BARIS 1: PENYEWA & PROPERTY / ALAMAT (DIPOSISIKAN DI ATAS PERIODE SEWA) -->
-                            ${(item.nama_penyewa || item.nama_property || item.alamat_property) ? `
+                            ${(basePenyewa || item.nama_property || item.alamat_property) ? `
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pb-2.5 border-b border-slate-200/60">
-                                    ${item.nama_penyewa ? `
+                                    ${basePenyewa ? `
                                         <div class="flex items-center gap-2">
                                             <i data-lucide="user" class="w-4 h-4 text-blue-600 shrink-0"></i>
                                             <div>
                                                 <span class="text-[10px] text-slate-400 font-extrabold uppercase block tracking-wider">Penyewa</span>
-                                                <span class="font-bold text-slate-800">${item.nama_penyewa}</span>
+                                                <span class="font-bold text-slate-800">${penyewaFormatted}</span>
                                             </div>
                                         </div>
                                     ` : ''}
