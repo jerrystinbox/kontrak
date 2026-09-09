@@ -76,6 +76,7 @@ function mapPageProperties(page, type) {
         jaminan: props.JAMINAN?.rich_text?.map(t => t.plain_text).join("") || "",
         keterangan: props.KETERANGAN?.rich_text?.map(t => t.plain_text).join("") || "",
         memo: props.MEMO?.rich_text?.map(t => t.plain_text).join("") || "",
+        property_id: props.PROPERTY?.relation?.[0]?.id || "",
         dokumentasi: docs,
         submitted: props["Created time"]?.created_time || props["Created Time"]?.created_time || page.created_time || ""
     };
@@ -101,7 +102,7 @@ async function buildPropertiesData(notion, targetId, databaseId, fields) {
     }
 
     const { 
-        rec_id, judul, status, mulai, selesai, harga_sewa, jaminan, keterangan, memo, formattedFiles 
+        rec_id, judul, status, mulai, selesai, harga_sewa, jaminan, keterangan, memo, property_id, formattedFiles 
     } = fields;
 
     const propertiesData = {};
@@ -162,6 +163,13 @@ async function buildPropertiesData(notion, targetId, databaseId, fields) {
     // 9. MEMO (rich_text)
     if (propSchema['MEMO'] && memo !== undefined) {
         propertiesData['MEMO'] = { rich_text: [{ text: { content: memo || "" } }] };
+    }
+
+    // 9b. PROPERTY (relation)
+    if (propSchema['PROPERTY'] && property_id !== undefined) {
+        propertiesData['PROPERTY'] = {
+            relation: property_id ? [{ id: property_id }] : []
+        };
     }
 
     // 10. DOKUMENTASI (files)
@@ -473,6 +481,7 @@ export default async function handler(req, res) {
         const jaminan = getSingleValue(bodyFields.jaminan);
         const keterangan = getSingleValue(bodyFields.keterangan);
         const memo = getSingleValue(bodyFields.memo);
+        const property_id = getSingleValue(bodyFields.property_id);
         const pin = getSingleValue(bodyFields.pin);
         const existingFilesStr = getSingleValue(bodyFields.existingFiles);
         const newFilesBlobsStr = getSingleValue(bodyFields.newFilesBlobs);
@@ -585,7 +594,7 @@ export default async function handler(req, res) {
             }
             
             const fieldsData = { 
-                rec_id, judul, status, mulai, selesai, harga_sewa, jaminan, keterangan, memo, formattedFiles 
+                rec_id, judul, status, mulai, selesai, harga_sewa, jaminan, keterangan, memo, property_id, formattedFiles 
             };
             const propertiesData = await buildPropertiesData(notion, targetId, databaseId, fieldsData);
 
