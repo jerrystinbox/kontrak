@@ -396,7 +396,7 @@
                     result.data.forEach(item => {
                         const opt = document.createElement('option');
                         opt.value = item.id;
-                        opt.textContent = `${item.nama}${item.daerah ? ' - ' + item.daerah : ''}`;
+                        opt.textContent = `${item.nama}${item.daerah ? ' (' + item.daerah + ')' : ''}`;
                         if (item.id === selectedPropertyId) opt.selected = true;
                         selectEl.appendChild(opt);
                     });
