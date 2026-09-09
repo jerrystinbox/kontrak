@@ -115,6 +115,8 @@ function mapPageProperties(page, type) {
         nama_penyewa: getRollupValue(props.NAMA_PENYEWA),
         nama_property: getRollupValue(props.NAMA_PROPERTY),
         alamat_property: getRollupValue(props.ALAMAT_PROPERTY) || getRollupValue(props.LOKASI_PROPERTY) || getRollupValue(props.ALAMAT),
+        pic_penyewa: getRollupValue(props.PIC_PENYEWA),
+        hp_pic_penyewa: getRollupValue(props.HP_PIC_PENYEWA),
         // ----------------------------
         dokumentasi: docs,
         submitted: props["Created time"]?.created_time || props["Created Time"]?.created_time || page.created_time || ""
