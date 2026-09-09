@@ -68,6 +68,14 @@
                 </div>
             </div>
 
+            <!-- Property Yang Disewa -->
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Property Yang Disewa</label>
+                <select id="property_id" class="form-input">
+                    <option value="">-- Memuat daftar property... --</option>
+                </select>
+            </div>
+
             <!-- Judul Kontrak (Baris Baru, Full-Width) -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Judul Kontrak</label>
@@ -367,6 +375,30 @@
 
         function closeMarkdownModal() {
             document.getElementById('markdownModal').classList.add('hidden');
+        }
+
+        // Fungsi Memuat List Property dari API
+        async function loadPropertyList(selectedPropertyId = '') {
+            const selectEl = document.getElementById('property_id');
+            try {
+                const res = await fetch(`/api/property?type=${encodeURIComponent(PARAM_DBID)}`);
+                const result = await res.json();
+                if (result.success && Array.isArray(result.data)) {
+                    selectEl.innerHTML = '<option value="">-- Pilih Property --</option>';
+                    result.data.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.id;
+                        opt.textContent = `${item.nama}${item.daerah ? ' - ' + item.daerah : ''}`;
+                        if (item.id === selectedPropertyId) opt.selected = true;
+                        selectEl.appendChild(opt);
+                    });
+                } else {
+                    selectEl.innerHTML = '<option value="">-- Gagal memuat property --</option>';
+                }
+            } catch (e) {
+                console.error('Gagal mengambil daftar property:', e);
+                selectEl.innerHTML = '<option value="">-- Gagal memuat property --</option>';
+            }
         }
 
         // 1. Auto-Expand Textarea
@@ -1036,7 +1068,7 @@
                     document.getElementById('keterangan').value = singleData.keterangan || '';
                     document.getElementById('memo').value = singleData.memo || '';
             
-                    // Update kalkulasi durasi kontrak
+                    loadPropertyList(data.property_id);
                     updateContractCalculations();
 
                     if (result.pageTitle) {
