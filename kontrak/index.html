@@ -610,8 +610,8 @@
             let penyewaFormatted = basePenyewa;
             if (basePenyewa) {
                 const infoPenyewa = [];
-                if (item.pic) infoPenyewa.push(`👤 ${item.pic}`);
-                if (item.no_hp) infoPenyewa.push(`📞 ${item.no_hp}`);
+                if (item.pic_penyewa) infoPenyewa.push(`👤 ${item.pic_penyewa}`);
+                if (item.hp_pic_penyewa) infoPenyewa.push(`📞 ${item.hp_pic_penyewa}`);
                 if (infoPenyewa.length > 0) {
                     penyewaFormatted += ` (${infoPenyewa.join(', ')})`;
                 }
