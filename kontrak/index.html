@@ -623,8 +623,8 @@
                 if (item.hp_pic_penyewa) {
                     const waUrl = formatWhatsAppLink(item.hp_pic_penyewa);
                     const phoneHtml = waUrl 
-                        ? `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-blue-600" onclick="event.stopPropagation()">📞 ${item.hp_pic_penyewa}</a>`
-                        : `📞 ${item.hp_pic_penyewa}`;
+                        ? `(<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-blue-600" onclick="event.stopPropagation()">${item.hp_pic_penyewa}</a>)`
+                        : `(${item.hp_pic_penyewa})`;
                     infoPenyewa.push(phoneHtml);
                 }
                 if (infoPenyewa.length > 0) {
