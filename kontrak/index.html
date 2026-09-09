@@ -901,11 +901,6 @@
             document.getElementById('filterKeyword').value = '';
             fetchArsipData();
         }
-
-        // Inisialisasi data & cek sesi PIN saat halaman pertama kali dimuat
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchArsipData();
-        });
         
         function getFileIcon(url, name) {
             const ext = (name || url || '').split('.').pop().toLowerCase().split('?')[0];
