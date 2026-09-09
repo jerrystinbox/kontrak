@@ -54,15 +54,35 @@ function decryptToken(tokenString) {
     }
 }
 
-// Helper ekstraksi nilai Rollup secara aman dari respons Notion API
+// Helper ekstraksi nilai Rollup/Properti secara aman dari respons Notion API
 function getRollupValue(rollupProp) {
-    if (!rollupProp || rollupProp.type !== 'rollup') return '';
+    if (!rollupProp) return '';
+    
+    // Jika ternyata properti biasa (bukan rollup): title, rich_text, select
+    if (rollupProp.type === 'title') return rollupProp.title?.map(t => t.plain_text).join('') || '';
+    if (rollupProp.type === 'rich_text') return rollupProp.rich_text?.map(t => t.plain_text).join('') || '';
+    if (rollupProp.type === 'select') return rollupProp.select?.name || '';
+
+    if (rollupProp.type !== 'rollup') return '';
     const rollupData = rollupProp.rollup;
-    if (rollupData.type === 'array' && rollupData.array && rollupData.array.length > 0) {
-        const item = rollupData.array[0];
-        if (item.type === 'title') return item.title?.map(t => t.plain_text).join('') || '';
-        if (item.type === 'rich_text') return item.rich_text?.map(t => t.plain_text).join('') || '';
-        if (item.type === 'select') return item.select?.name || '';
+    if (!rollupData) return '';
+
+    // Jika rollup bertipe string / number langsung
+    if (rollupData.type === 'string') return rollupData.string || '';
+    if (rollupData.type === 'number') return rollupData.number !== null ? String(rollupData.number) : '';
+
+    // Jika rollup bertipe array
+    if (rollupData.type === 'array' && Array.isArray(rollupData.array) && rollupData.array.length > 0) {
+        return rollupData.array.map(item => {
+            if (item.type === 'title') return item.title?.map(t => t.plain_text).join('') || '';
+            if (item.type === 'rich_text') return item.rich_text?.map(t => t.plain_text).join('') || '';
+            if (item.type === 'select') return item.select?.name || '';
+            if (item.type === 'formula') {
+                return item.formula?.string || (item.formula?.number !== undefined ? String(item.formula.number) : '');
+            }
+            if (item.type === 'number') return item.number !== null ? String(item.number) : '';
+            return '';
+        }).filter(Boolean).join(', ');
     }
     return '';
 }
@@ -91,10 +111,10 @@ function mapPageProperties(page, type) {
         memo: props.MEMO?.rich_text?.map(t => t.plain_text).join("") || "",
         penyewa_id: props.PENYEWA?.relation?.[0]?.id || "",
         property_id: props.PROPERTY?.relation?.[0]?.id || "",
-        // --- PROPERTI ROLLUP ---
+        // --- PROPERTI ROLLUP / RELASI ---
         nama_penyewa: getRollupValue(props.NAMA_PENYEWA),
         nama_property: getRollupValue(props.NAMA_PROPERTY),
-        alamat_property: getRollupValue(props.ALAMAT_PROPERTY),
+        alamat_property: getRollupValue(props.ALAMAT_PROPERTY) || getRollupValue(props.LOKASI_PROPERTY) || getRollupValue(props.ALAMAT),
         // ----------------------------
         dokumentasi: docs,
         submitted: props["Created time"]?.created_time || props["Created Time"]?.created_time || page.created_time || ""
