@@ -611,6 +611,24 @@
                         <!-- JUDUL -->
                         <h3 class="text-base font-extrabold text-slate-900 leading-snug tracking-tight mb-3 hover:text-blue-600 transition-colors">${item.judul || 'Tanpa Judul'}</h3>
 
+                        <!-- BARIS INFORMASI BARU: PENYEWA & PROPERTY (ROLLUP) -->
+                        ${(item.nama_penyewa || item.nama_property) ? `
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mb-3 text-xs font-semibold text-slate-600">
+                                ${item.nama_penyewa ? `
+                                    <div class="flex items-center gap-1.5">
+                                        <i data-lucide="user" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+                                        <span>${item.nama_penyewa}</span>
+                                    </div>
+                                ` : ''}
+                                ${item.nama_property ? `
+                                    <div class="flex items-center gap-1.5">
+                                        <i data-lucide="building" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+                                        <span>${item.nama_property} ${item.alamat_property ? `<span class="text-slate-400 font-normal">(${item.alamat_property})</span>` : ''}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+
                         <!-- WADAH TUNGGAL: PERIODE, SISA MASA KONTRAK, HARGA SEWA & JAMINAN -->
                         <div class="mb-3 p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-medium text-slate-700 space-y-2.5">
                             <!-- BARIS 1: PERIODE SEWA & SISA MASA KONTRAK -->
