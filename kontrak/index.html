@@ -306,8 +306,33 @@
         }
 
         function logoutPinSession() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            // 1. Hapus sesi PIN dari LocalStorage
             localStorage.removeItem(getPinSessionKey());
-            window.location.reload();
+            
+            // 2. Sembunyikan badge timer countdown
+            const card = document.getElementById('sessionCountdownCard');
+            if (card) card.classList.add('hidden');
+    
+            // 3. Bersihkan data arsip dari layar agar terproteksi
+            const arsipList = document.getElementById('arsipList');
+            if (arsipList) arsipList.innerHTML = '';
+    
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) emptyState.classList.add('hidden');
+    
+            const loadMoreArea = document.getElementById('loadMoreArea');
+            if (loadMoreArea) loadMoreArea.classList.add('hidden');
+    
+            // 4. Tampilkan Modal PIN secara instan
+            const pinModal = document.getElementById('pinModal');
+            if (pinModal) {
+                pinModal.classList.remove('hidden');
+                setTimeout(() => document.getElementById('inputPinAdmin')?.focus(), 50);
+            }
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         let countdownInterval = null;
