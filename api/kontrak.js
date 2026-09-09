@@ -54,6 +54,19 @@ function decryptToken(tokenString) {
     }
 }
 
+// Helper ekstraksi nilai Rollup secara aman dari respons Notion API
+function getRollupValue(rollupProp) {
+    if (!rollupProp || rollupProp.type !== 'rollup') return '';
+    const rollupData = rollupProp.rollup;
+    if (rollupData.type === 'array' && rollupData.array && rollupData.array.length > 0) {
+        const item = rollupData.array[0];
+        if (item.type === 'title') return item.title?.map(t => t.plain_text).join('') || '';
+        if (item.type === 'rich_text') return item.rich_text?.map(t => t.plain_text).join('') || '';
+        if (item.type === 'select') return item.select?.name || '';
+    }
+    return '';
+}
+
 // Helper Ekstraksi Property Notion Ke Format JSON Output (Lama + Baru)
 function mapPageProperties(page, type) {
     const props = page.properties;
@@ -78,6 +91,11 @@ function mapPageProperties(page, type) {
         memo: props.MEMO?.rich_text?.map(t => t.plain_text).join("") || "",
         penyewa_id: props.PENYEWA?.relation?.[0]?.id || "",
         property_id: props.PROPERTY?.relation?.[0]?.id || "",
+        // --- PROPERTI ROLLUP ---
+        nama_penyewa: getRollupValue(props.NAMA_PENYEWA),
+        nama_property: getRollupValue(props.NAMA_PROPERTY),
+        alamat_property: getRollupValue(props.ALAMAT_PROPERTY),
+        // ----------------------------
         dokumentasi: docs,
         submitted: props["Created time"]?.created_time || props["Created Time"]?.created_time || page.created_time || ""
     };
