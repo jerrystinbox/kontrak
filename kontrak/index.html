@@ -417,6 +417,15 @@
         let currentNextCursor = null;
         let isLoading = false;
 
+        function formatWhatsAppLink(phoneStr) {
+            if (!phoneStr) return null;
+            let clean = phoneStr.replace(/[^0-9]/g, '');
+            if (clean.startsWith('0')) {
+                clean = '62' + clean.slice(1);
+            }
+            return clean.length >= 8 ? `https://wa.me/${clean}` : null;
+        }
+
         function formatDateReadable(dateStr) {
             if (!dateStr) return "-";
             const d = new Date(dateStr + 'T00:00:00');
@@ -605,15 +614,21 @@
                 statusColor = 'bg-amber-50 text-amber-700 border-amber-200';
             }
 
-            // --- FORMAT DATA PENYEWA (NAMA, PIC, NO HP) ---
+            /// --- FORMAT DATA PENYEWA (NAMA, PIC, NO HP) ---
             const basePenyewa = item.nama_penyewa || item.nama || '';
             let penyewaFormatted = basePenyewa;
             if (basePenyewa) {
                 const infoPenyewa = [];
                 if (item.pic_penyewa) infoPenyewa.push(`PIC: ${item.pic_penyewa}`);
-                if (item.hp_pic_penyewa) infoPenyewa.push(`📞 ${item.hp_pic_penyewa}`);
+                if (item.hp_pic_penyewa) {
+                    const waUrl = formatWhatsAppLink(item.hp_pic_penyewa);
+                    const phoneHtml = waUrl 
+                        ? `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-blue-600" onclick="event.stopPropagation()">📞 ${item.hp_pic_penyewa}</a>`
+                        : `📞 ${item.hp_pic_penyewa}`;
+                    infoPenyewa.push(phoneHtml);
+                }
                 if (infoPenyewa.length > 0) {
-                    penyewaFormatted += `</br>${infoPenyewa.join(' ')}`;
+                    penyewaFormatted += `</br><span class="text-slate-500 font-medium">${infoPenyewa.join(' ')}</span>`;
                 }
             }
 
