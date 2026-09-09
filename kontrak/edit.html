@@ -68,6 +68,14 @@
                 </div>
             </div>
 
+            <!-- Penyewa -->
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Penyewa</label>
+                <select id="penyewa_id" class="form-input">
+                    <option value="">-- Memuat daftar penyewa... --</option>
+                </select>
+            </div>
+
             <!-- Property Yang Disewa -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Property Yang Disewa</label>
@@ -401,6 +409,32 @@
             }
         }
 
+        // Fungsi Memuat List Penyewa dari API
+        async function loadPenyewaList(selectedPenyewaId = '') {
+            const selectEl = document.getElementById('penyewa_id');
+            try {
+                const res = await fetch(`/api/penyewa?type=${encodeURIComponent(PARAM_DBID)}`);
+                const result = await res.json();
+                if (result.success && Array.isArray(result.data)) {
+                    selectEl.innerHTML = '<option value="">-- Pilih Penyewa --</option>';
+                    result.data.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.id;
+                        // Format Label: Nama Penyewa (PIC jika ada)
+                        const labelText = item.nama + (item.pic ? ` (${item.pic})` : '');
+                        opt.textContent = labelText;
+                        if (item.id === selectedPenyewaId) opt.selected = true;
+                        selectEl.appendChild(opt);
+                    });
+                } else {
+                    selectEl.innerHTML = '<option value="">-- Gagal memuat penyewa --</option>';
+                }
+            } catch (e) {
+                console.error('Gagal mengambil daftar penyewa:', e);
+                selectEl.innerHTML = '<option value="">-- Gagal memuat penyewa --</option>';
+            }
+        }
+
         // 1. Auto-Expand Textarea
         const keteranganInput = document.getElementById('keterangan');
         function autoExpandTextarea(el) {
@@ -569,6 +603,8 @@
         // Listener Perubahan Input untuk Deteksi Perubahan & Live Preview
         document.getElementById('mulai').addEventListener('change', () => { isFormDirty = true; updateContractCalculations(); });
         document.getElementById('selesai').addEventListener('change', () => { isFormDirty = true; updateContractCalculations(); });
+        document.getElementById('penyewa_id').addEventListener('change', () => isFormDirty = true);
+        document.getElementById('property_id').addEventListener('change', () => isFormDirty = true);
         document.getElementById('rec_id').addEventListener('input', () => isFormDirty = true);
         document.getElementById('judul').addEventListener('input', () => isFormDirty = true);
         document.getElementById('status').addEventListener('change', () => isFormDirty = true);
@@ -1069,6 +1105,7 @@
                     document.getElementById('memo').value = singleData.memo || '';
             
                     loadPropertyList(singleData.property_id);
+                    loadPenyewaList(singleData.penyewa_id);
                     updateContractCalculations();
 
                     if (result.pageTitle) {
@@ -1172,6 +1209,7 @@
                 formData.append('keterangan', document.getElementById('keterangan').value);
                 formData.append('memo', document.getElementById('memo').value);
                 formData.append('property_id', document.getElementById('property_id').value);
+                formData.append('penyewa_id', document.getElementById('property_id').value);
                 formData.append('pin', pin);
                 formData.append('existingFiles', JSON.stringify(existingFiles));
                 formData.append('newFilesBlobs', JSON.stringify(newFilesBlobs));
