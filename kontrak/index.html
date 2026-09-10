@@ -979,9 +979,10 @@
                 else loadMoreArea.classList.add('hidden');
 
                 // ===== OTOMATIS AMBIL DATA LAGI JIKA KONTRAK TAMPIL KURANG DARI 20 =====
-                if (arsipDataMap.size < 20 && currentNextCursor) {
-                    // Panggil otomatis fetch berikutnya untuk melengkapi kuota 20 item
-                    fetchArsipData(currentNextCursor, true);
+                if (arsipDataMap.size < 20 && json.has_more && currentNextCursor) {
+                    isLoading = false;
+                    await fetchArsipData(currentNextCursor, true);
+                    return;
                 }
 
             } catch (err) {
