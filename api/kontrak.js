@@ -487,7 +487,7 @@ export default async function handler(req, res) {
             }
 
             // GANTI: Sesuaikan pengurutan query ke Notion Database
-            let notionSorts = [{ property: 'MULAI', direction: 'ascending' }];
+            let notionSorts = [{ property: 'SELESAI', direction: 'ascending' }];
             if (sortBy === 'judul') notionSorts = [{ property: 'JUDUL', direction: 'ascending' }];
             else if (sortBy === 'keterangan') notionSorts = [{ property: 'KETERANGAN', direction: 'ascending' }];
 
@@ -510,14 +510,28 @@ export default async function handler(req, res) {
                 if (sortBy === 'status') return (a.status || "").trim().localeCompare((b.status || "").trim(), 'id', { sensitivity: 'base' });
                 if (sortBy === 'keterangan') return (a.keterangan || "").trim().localeCompare((b.keterangan || "").trim(), 'id', { sensitivity: 'base' });
 
-                const timeA = (a.mulai && a.mulai.trim()) ? new Date(a.mulai.trim()).getTime() : null;
-                const timeB = (b.mulai && b.mulai.trim()) ? new Date(b.mulai.trim()).getTime() : null;
+                // Logic sorting default: Tanggal Selesai ASCENDING -> Tanggal Mulai Terlama
+                const timeSelesaiA = (a.selesai && a.selesai.trim()) ? new Date(a.selesai.trim()).getTime() : null;
+                const timeSelesaiB = (b.selesai && b.selesai.trim()) ? new Date(b.selesai.trim()).getTime() : null;
 
-                if (!timeA && !timeB) return nameA.localeCompare(nameB, 'id', { sensitivity: 'base' });
-                if (!timeA) return 1;
-                if (!timeB) return -1;
+                if (timeSelesaiA && timeSelesaiB) {
+                    if (timeSelesaiA !== timeSelesaiB) return timeSelesaiA - timeSelesaiB;
+                }
 
-                if (timeA !== timeB) return timeA - timeB;
+                if (timeSelesaiA && !timeSelesaiB) return -1;
+                if (!timeSelesaiA && timeSelesaiB) return 1;
+
+                const timeMulaiA = (a.mulai && a.mulai.trim()) ? new Date(a.mulai.trim()).getTime() : null;
+                const timeMulaiB = (b.mulai && b.mulai.trim()) ? new Date(b.mulai.trim()).getTime() : null;
+
+                if (timeMulaiA && timeMulaiB) {
+                    if (timeMulaiA !== timeMulaiB) return timeMulaiA - timeMulaiB;
+                } else if (timeMulaiA && !timeMulaiB) {
+                    return -1;
+                } else if (!timeMulaiA && timeMulaiB) {
+                    return 1;
+                }
+
                 return nameA.localeCompare(nameB, 'id', { sensitivity: 'base' });
             });
 
