@@ -975,6 +975,9 @@
                     lucide.createIcons();
                 }
 
+                if (json.has_more) loadMoreArea.classList.remove('hidden');
+                else loadMoreArea.classList.add('hidden');
+
                 // ===== OTOMATIS AMBIL DATA LAGI JIKA KONTRAK TAMPIL KURANG DARI 20 =====
                 if (arsipDataMap.size < 20 && currentNextCursor) {
                     // Panggil otomatis fetch berikutnya untuk melengkapi kuota 20 item
