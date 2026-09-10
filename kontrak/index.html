@@ -965,17 +965,21 @@
 
                 data.forEach(item => arsipDataMap.set(item.id, item));
 
-                if (data.length === 0 && !append) {
+                if (data.length === 0 && !append && arsipDataMap.size === 0) {
                     emptyState.classList.remove('hidden');
                 } else {
+                    if (emptyState) emptyState.classList.add('hidden');
                     const html = data.map(item => renderCard(item)).join('');
                     if (append) arsipList.insertAdjacentHTML('beforeend', html);
                     else arsipList.innerHTML = html;
                     lucide.createIcons();
                 }
 
-                if (json.has_more) loadMoreArea.classList.remove('hidden');
-                else loadMoreArea.classList.add('hidden');
+                // ===== OTOMATIS AMBIL DATA LAGI JIKA KONTRAK TAMPIL KURANG DARI 20 =====
+                if (arsipDataMap.size < 20 && currentNextCursor) {
+                    // Panggil otomatis fetch berikutnya untuk melengkapi kuota 20 item
+                    fetchArsipData(true);
+                }
 
             } catch (err) {
                 alert(err.message);
