@@ -146,6 +146,24 @@
                 </button>
             </div>
 
+            <!-- ===== (FILTER STATUS & DAERAH) ===== -->
+            <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-slate-100">
+                <div>
+                    <label for="filterStatus" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Status</label>
+                    <select id="filterStatus" onchange="handleFilterChange()" class="w-full text-xs font-semibold p-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 transition-all h-9 text-slate-700">
+                        <option value="AKTIF" selected>AKTIF</option>
+                        <option value="">Semua (AKTIF/SELESAI)</option>
+                        <option value="SELESAI">SELESAI</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filterDaerah" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Daerah</label>
+                    <select id="filterDaerah" onchange="handleFilterChange()" class="w-full text-xs font-semibold p-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 transition-all h-9 text-slate-700">
+                        <option value="">Semua Daerah</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-slate-100">
                 <div>
                     <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Mulai Tanggal</label>
@@ -769,6 +787,23 @@
             `;
         }
 
+        function populateDaerahOptions(list) {
+          const select = document.getElementById('filterDaerah');
+          if (!select || !Array.isArray(list)) return;
+          
+          const currentValue = select.value;
+          select.innerHTML = '<option value="">Semua Daerah</option>';
+          
+          list.forEach(daerah => {
+              if (!daerah) return;
+              const opt = document.createElement('option');
+              opt.value = daerah;
+              opt.textContent = daerah;
+              if (daerah === currentValue) opt.selected = true;
+              select.appendChild(opt);
+          });
+        }
+
         async function fetchArsipData(cursor = null, append = false, providedPin = null) {
             if (isLoading) return;
 
@@ -795,11 +830,15 @@
             }
 
             const keyword = document.getElementById('filterKeyword').value;
+
+            const status = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : 'AKTIF';
+            const daerah = document.getElementById('filterDaerah') ? document.getElementById('filterDaerah').value : '';
+
             const startDate = document.getElementById('filterStartDate').value;
             const endDate = document.getElementById('filterEndDate').value;
 
             // Kirim token, dbid, dan PIN ke API
-            const requestPayload = { keyword, startDate, endDate, cursor, pin: pinToUse };
+            const requestPayload = { keyword, status, daerah, startDate, endDate, cursor, pin: pinToUse };
             if (PARAM_TOKEN) requestPayload.token = PARAM_TOKEN;
             if (PARAM_DBID) requestPayload.dbid = PARAM_DBID;
 
@@ -828,6 +867,10 @@
                                 badge.textContent = json.pageTitle;
                                 badge.classList.remove('hidden');
                             }
+                        }
+
+                        if (json.daerahList || json.daerah) {
+                            populateDaerahOptions(json.daerahList || json.daerah);
                         }
 
                         localStorage.removeItem(getPinSessionKey());
