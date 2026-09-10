@@ -792,16 +792,26 @@
           if (!select || !Array.isArray(list)) return;
           
           const currentValue = select.value;
-          select.innerHTML = '<option value="">Semua Daerah</option>';
           
-          list.forEach(daerah => {
-              if (!daerah) return;
-              const opt = document.createElement('option');
-              opt.value = daerah;
-              opt.textContent = daerah;
-              if (daerah === currentValue) opt.selected = true;
-              select.appendChild(opt);
+          // Kumpulkan nilai yang sudah ada di select agar tidak terjadi duplikasi
+          const existingValues = new Set();
+          Array.from(select.options).forEach(opt => {
+              if (opt.value) existingValues.add(opt.value);
           });
+
+          list.forEach(daerah => {
+              if (!daerah || typeof daerah !== 'string') return;
+              const cleanDaerah = daerah.trim();
+              if (!cleanDaerah || existingValues.has(cleanDaerah)) return;
+              
+              const opt = document.createElement('option');
+              opt.value = cleanDaerah;
+              opt.textContent = cleanDaerah;
+              select.appendChild(opt);
+              existingValues.add(cleanDaerah);
+          });
+
+          if (currentValue) select.value = currentValue;
         }
 
         async function fetchArsipData(cursor = null, append = false, providedPin = null) {
@@ -922,8 +932,36 @@
                     document.getElementById('btnInputLink').href = `input.html?dbid=${PARAM_DBID}`;
                 }
 
-                const data = json.data || [];
+                let data = json.data || [];
                 currentNextCursor = json.next_cursor || null;
+
+                // ===== 1. POPULASI OPSI DAERAH SAAT RESPOS SUKSES (200 OK) =====
+                if (json.daerahList || json.daerah) {
+                    populateDaerahOptions(json.daerahList || json.daerah);
+                } else if (data.length > 0) {
+                    const extractedDaerah = [...new Set(data.map(item => item.daerah).filter(Boolean))];
+                    populateDaerahOptions(extractedDaerah);
+                }
+
+                // ===== 2. SAFEGUARD FILTERING PRESISI (STATUS & DAERAH) =====
+                if (status) {
+                    const statusUpper = status.toUpperCase();
+                    data = data.filter(item => {
+                        const itemStatus = (item.status || '').trim().toUpperCase();
+                        if (statusUpper === 'AKTIF') {
+                            // Kecualikan kontrak berstatus SELESAI / KEMBALI
+                            return !itemStatus.includes('SELESAI') && !itemStatus.includes('KEMBALI') &&
+                                   (itemStatus.includes('AKTIF') || itemStatus.includes('SEWA') || itemStatus.includes('JALAN') || itemStatus === '');
+                        } else if (statusUpper === 'SELESAI') {
+                            return itemStatus.includes('SELESAI') || itemStatus.includes('KEMBALI');
+                        }
+                        return itemStatus === statusUpper;
+                    });
+                }
+
+                if (daerah) {
+                    data = data.filter(item => (item.daerah || '').trim().toLowerCase() === daerah.trim().toLowerCase());
+                }
 
                 data.forEach(item => arsipDataMap.set(item.id, item));
 
