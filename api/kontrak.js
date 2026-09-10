@@ -376,25 +376,21 @@ export default async function handler(req, res) {
                 const inputToken = encryptToken({ type: type });
                 const data = response.results.map(page => mapPageProperties(page, type));
 
-                // --- LOGIKA URUTAN: Tanggal Selesai terdekat hari ini -> Tanggal Mulai Terlama ---
-                const now = new Date().setHours(0, 0, 0, 0);
-
+                // --- LOGIKA URUTAN: Tanggal Selesai ASCENDING -> Tanggal Mulai Terlama ---
                 data.sort((a, b) => {
                     const timeSelesaiA = (a.selesai && a.selesai.trim()) ? new Date(a.selesai.trim()).getTime() : null;
                     const timeSelesaiB = (b.selesai && b.selesai.trim()) ? new Date(b.selesai.trim()).getTime() : null;
 
-                    // 1. Jika keduanya punya tanggal selesai -> Urutkan yang paling dekat dengan hari ini
+                    // 1. Jika keduanya punya tanggal selesai -> Urutkan dari yang paling awal/tua selesainya (ASCENDING)
                     if (timeSelesaiA && timeSelesaiB) {
-                        const distA = Math.abs(timeSelesaiA - now);
-                        const distB = Math.abs(timeSelesaiB - now);
-                        if (distA !== distB) return distA - distB;
+                        if (timeSelesaiA !== timeSelesaiB) return timeSelesaiA - timeSelesaiB;
                     }
 
-                    // 2. Jika salah satu punya tanggal selesai -> Prioritaskan yang ada tanggal selesai
+                    // 2. Jika hanya satu yang ada tanggal selesai -> Utamakan yang punya tanggal selesai
                     if (timeSelesaiA && !timeSelesaiB) return -1;
                     if (!timeSelesaiA && timeSelesaiB) return 1;
 
-                    // 3. Jika tanggal selesai kosong -> Urutkan berdasarkan Tanggal Mulai (Terlama ke Terbaru)
+                    // 3. Jika tanggal selesai kosong -> Urutkan berdasarkan Tanggal Mulai (Paling Lama ke Terbaru)
                     const timeMulaiA = (a.mulai && a.mulai.trim()) ? new Date(a.mulai.trim()).getTime() : null;
                     const timeMulaiB = (b.mulai && b.mulai.trim()) ? new Date(b.mulai.trim()).getTime() : null;
 
