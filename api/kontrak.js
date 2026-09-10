@@ -366,8 +366,8 @@ export default async function handler(req, res) {
                     database_id: databaseId,
                     sorts: [
                         {
-                            property: 'MULAI',
-                            direction: 'descending'
+                            property: 'SELESAI',
+                            direction: 'ascending'
                         }
                     ],
                     page_size: 100
@@ -376,16 +376,36 @@ export default async function handler(req, res) {
                 const inputToken = encryptToken({ type: type });
                 const data = response.results.map(page => mapPageProperties(page, type));
 
-                // --- LOGIKA URUTAN: Tanggal Mulai OLD to NEW (Terlama ke Terbaru) ---
+                // --- LOGIKA URUTAN: Tanggal Selesai terdekat hari ini -> Tanggal Mulai Terlama ---
+                const now = new Date().setHours(0, 0, 0, 0);
+
                 data.sort((a, b) => {
-                    const timeA = (a.mulai && a.mulai.trim()) ? new Date(a.mulai.trim()).getTime() : null;
-                    const timeB = (b.mulai && b.mulai.trim()) ? new Date(b.mulai.trim()).getTime() : null;
+                    const timeSelesaiA = (a.selesai && a.selesai.trim()) ? new Date(a.selesai.trim()).getTime() : null;
+                    const timeSelesaiB = (b.selesai && b.selesai.trim()) ? new Date(b.selesai.trim()).getTime() : null;
 
-                    if (!timeA && !timeB) return (a.judul || "").localeCompare(b.judul || "", 'id', { sensitivity: 'base' });
-                    if (!timeA) return 1;
-                    if (!timeB) return -1;
+                    // 1. Jika keduanya punya tanggal selesai -> Urutkan yang paling dekat dengan hari ini
+                    if (timeSelesaiA && timeSelesaiB) {
+                        const distA = Math.abs(timeSelesaiA - now);
+                        const distB = Math.abs(timeSelesaiB - now);
+                        if (distA !== distB) return distA - distB;
+                    }
 
-                    if (timeA !== timeB) return timeA - timeB; // Ubah dari (timeB - timeA) menjadi (timeA - timeB)
+                    // 2. Jika salah satu punya tanggal selesai -> Prioritaskan yang ada tanggal selesai
+                    if (timeSelesaiA && !timeSelesaiB) return -1;
+                    if (!timeSelesaiA && timeSelesaiB) return 1;
+
+                    // 3. Jika tanggal selesai kosong -> Urutkan berdasarkan Tanggal Mulai (Terlama ke Terbaru)
+                    const timeMulaiA = (a.mulai && a.mulai.trim()) ? new Date(a.mulai.trim()).getTime() : null;
+                    const timeMulaiB = (b.mulai && b.mulai.trim()) ? new Date(b.mulai.trim()).getTime() : null;
+
+                    if (timeMulaiA && timeMulaiB) {
+                        if (timeMulaiA !== timeMulaiB) return timeMulaiA - timeMulaiB;
+                    } else if (timeMulaiA && !timeMulaiB) {
+                        return -1;
+                    } else if (!timeMulaiA && timeMulaiB) {
+                        return 1;
+                    }
+
                     return (a.judul || "").localeCompare(b.judul || "", 'id', { sensitivity: 'base' });
                 });
 
