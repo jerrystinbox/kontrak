@@ -1134,6 +1134,7 @@
                     // Sesuaikan tinggi textarea secara otomatis
                     setTimeout(() => {
                         autoExpandTextarea(document.getElementById('keterangan'));
+                        autoExpandTextarea(document.getElementById('memo'));
                     }, 100);
                 } else {
                     throw new Error(result.error || "Gagal memuat data untuk diedit");
