@@ -615,14 +615,6 @@
         document.getElementById('status').addEventListener('change', () => isFormDirty = true);
         document.getElementById('harga_sewa').addEventListener('input', () => isFormDirty = true);
         document.getElementById('jaminan').addEventListener('input', () => isFormDirty = true);
-        
-        const memoInput = document.getElementById('memo');
-        if (memoInput) {
-            memoInput.addEventListener('input', (e) => {
-                isFormDirty = true;
-                autoExpandTextarea(e.target);
-            });
-        }
 
         // 2. Setup File Drop Zone & Clipboard Paste
         const dropZone = document.getElementById('dropZone');
