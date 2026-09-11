@@ -20,19 +20,17 @@
             border-radius: 1rem; padding: 0.8rem 1rem; font-weight: 600; font-size: 0.9rem;
             outline: none; transition: all 0.2s;
         }
-        .form-input:focus { border-color: #f59e0b; background-color: white; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2); }
+        .form-input:focus { border-color: #2563eb; background-color: white; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
     </style>
 </head>
 <body class="min-h-screen pb-12">
-
     <div class="max-w-2xl mx-auto px-4 pt-6 pb-2">
         <div class="flex items-center justify-between bg-white/80 backdrop-blur-md p-4 px-5 rounded-2xl border border-slate-200/60 shadow-sm gap-4">
-            <button type="button" onclick="goBack()" class="flex items-center gap-2 text-slate-500 hover:text-amber-600 font-bold text-xs transition-colors shrink-0">
+            <button type="button" onclick="goBack()" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold text-xs transition-colors shrink-0">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
             </button>
             <div class="text-right">
-                <h1 id="pageHeadingTitle" class="text-sm font-extrabold text-slate-800 flex items-center justify-end gap-1.5">
-                    <i data-lucide="file-pen-line" class="w-4 h-4 text-amber-500"></i>
+                    <i data-lucide="file-pen-line" class="w-4 h-4 text-blue-600"></i>
                     Edit Data Arsip
                 </h1>
                 <p class="text-[11px] text-slate-400 font-medium">Ubah data arsip beserta berkas pendukung.</p>
@@ -42,7 +40,7 @@
 
     <div class="max-w-2xl mx-auto px-4 mt-4">
         <div id="loading" class="py-20 text-center bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50">
-            <div class="animate-spin inline-block w-8 h-8 border-[3px] border-amber-500 border-t-transparent rounded-full"></div>
+            <div class="animate-spin inline-block w-8 h-8 border-[3px] border-blue-600 border-t-transparent rounded-full"></div>
             <p class="text-xs font-bold text-slate-400 mt-4 uppercase tracking-widest">Mengambil Data...</p>
         </div>
 
@@ -126,8 +124,8 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Keterangan / Catatan</label>
                     <div class="flex items-center gap-1.5">
                         <span id="markdownWarning" class="hidden cursor-help text-xs" title="Teks mengandung format Markdown">⚠️</span>
-                        <button type="button" onclick="openMarkdownModal()" class="flex items-center gap-1 text-[11px] font-bold text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-xl transition-all border border-amber-200/60" title="Petunjuk Format Teks Markdown">
-                            <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-500 fill-amber-400"></i>
+                        <button type="button" onclick="openMarkdownModal()" class="flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-xl transition-all border border-blue-200/80" title="Petunjuk Format Teks Markdown">
+                            <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-blue-600 fill-blue-400"></i>
                             <span>Format Teks</span>
                         </button>
                     </div>
@@ -152,14 +150,14 @@
                 </div>
                 
                 <div class="w-full bg-slate-100 rounded-full h-1.5 mb-3 overflow-hidden">
-                    <div id="storageQuotaBar" class="bg-amber-500 h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="storageQuotaBar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
                 </div>
 
-                <div id="dropZone" class="border-2 border-dashed border-slate-200 rounded-2xl p-5 text-center bg-slate-50 hover:bg-white hover:border-amber-400 transition-all cursor-pointer group">
+                <div id="dropZone" class="border-2 border-dashed border-slate-200 rounded-2xl p-5 text-center bg-slate-50 hover:bg-white hover:border-blue-500 transition-all cursor-pointer group">
                     <div class="flex flex-col items-center justify-center space-y-1 select-none">
-                        <i data-lucide="folder-up" class="w-6 h-6 text-slate-400 group-hover:text-amber-500 transition-colors"></i>
+                        <i data-lucide="folder-up" class="w-6 h-6 text-slate-400 group-hover:text-blue-600 transition-colors"></i>
                         <p class="text-xs font-semibold text-slate-600">
-                            Drag & drop, <span class="text-amber-600 underline">browse</span>, atau <span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-mono text-[11px]">Ctrl+V</span> (paste)
+                            Drag & drop, <span class="text-blue-600 underline">browse</span>, atau <span class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-[11px]">Ctrl+V</span> (paste)
                         </p>
                         <p class="text-[10px] font-bold text-slate-400">Total batas ukuran file hingga 20 MB</p>
                     </div>
@@ -435,8 +433,6 @@
             }
         }
 
-        // 1. Auto-Expand Textarea
-        const keteranganInput = document.getElementById('keterangan');
         function autoExpandTextarea(el) {
             const currentScroll = window.scrollY;
             el.style.height = 'auto';
@@ -455,7 +451,16 @@
             }
         }
 
+        // 1. Auto-Expand Textarea
+        const keteranganInput = document.getElementById('keterangan');
         keteranganInput.addEventListener('input', (e) => {
+            isFormDirty = true;
+            autoExpandTextarea(e.target);
+            checkMarkdownSyntax(e.target.value);
+        });
+
+        const memoInput = document.getElementById('memo');
+        memoInput.addEventListener('input', (e) => {
             isFormDirty = true;
             autoExpandTextarea(e.target);
             checkMarkdownSyntax(e.target.value);
