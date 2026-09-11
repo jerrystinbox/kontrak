@@ -30,8 +30,8 @@
                 <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali
             </button>
             <div class="text-right">
-                    <i data-lucide="file-pen-line" class="w-4 h-4 text-blue-600"></i>
-                    Edit Data Arsip
+                <h1 id="pageHeadingTitle" class="flex items-center justify-end gap-1.5 text-base font-extrabold text-slate-800">
+                    <i data-lucide="file-pen-line" class="w-4 h-4 text-blue-600"></i> Edit Data Arsip
                 </h1>
                 <p class="text-[11px] text-slate-400 font-medium">Ubah data arsip beserta berkas pendukung.</p>
             </div>
@@ -174,7 +174,7 @@
                 <button type="button" onclick="confirmDelete()" id="btnDelete" class="px-5 py-3 bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 font-bold text-xs rounded-xl border border-red-200/60 transition-all flex items-center justify-center gap-2 shrink-0">
                     <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus
                 </button>
-                <button type="submit" id="btnSubmit" class="flex-1 px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-amber-500/30 transition-all flex items-center justify-center gap-2">
+                <button type="submit" id="btnSubmit" class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center gap-2">
                     <i data-lucide="save" class="w-4 h-4"></i> Simpan
                 </button>
             </div>
@@ -287,7 +287,7 @@
                 </p>
             </div>
 
-            <button type="button" onclick="closeMarkdownModal()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-md transition-all">
+            <button type="button" onclick="closeMarkdownModal()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all">
                 Mengerti
             </button>
         </div>
@@ -1109,7 +1109,7 @@
                         currentDbTitle = result.pageTitle;
                         document.getElementById('docTitle').textContent = `Edit ${result.pageTitle}`;
                         const heading = document.getElementById('pageHeadingTitle');
-                        if (heading) heading.innerHTML = `<i data-lucide="edit-3" class="w-4 h-4 text-amber-500"></i> Edit ${result.pageTitle}`;
+                        if (heading) heading.innerHTML = `<i data-lucide="edit-3" class="w-4 h-4 text-blue-600"></i> Edit ${result.pageTitle}`;
                     }
 
                     // Auto-fill PIN konfirmasi dari sesi yang tersimpan
@@ -1262,7 +1262,7 @@
 
             if (isDelete) {
                 actionContainer.innerHTML = `
-                    <button onclick="redirectAfterSuccess()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-md shadow-amber-500/20 transition-all">
+                    <button onclick="redirectAfterSuccess()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 transition-all">
                         Kembali
                     </button>
                 `;
@@ -1279,7 +1279,7 @@
                 else if (PARAM_DBID) indexTarget += `?dbid=${encodeURIComponent(PARAM_DBID)}`;
 
                 actionContainer.innerHTML = `
-                    <button onclick="window.location.href='${viewTarget}'" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-md shadow-amber-500/20 transition-all flex items-center justify-center gap-2">
+                    <button onclick="window.location.href='${viewTarget}'" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2">
                         <i data-lucide="eye" class="w-4 h-4"></i> Kembali Lihat Data
                     </button>
                     <button onclick="window.location.href='${indexTarget}'" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
