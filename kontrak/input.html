@@ -46,7 +46,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
                 <div class="sm:col-span-6">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status Kontrak</label>
-                    <select id="status" class="form-input">
+                    <select id="status" class="form-input" required>
                         <option value="">-- Pilih Status --</option>
                         <option value="AKTIF">AKTIF</option>
                         <option value="SELESAI">SELESAI</option>
@@ -63,14 +63,14 @@
 
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Penyewa</label>
-                <select id="penyewa_id" class="form-input">
+                <select id="penyewa_id" class="form-input" required>
                     <option value="">-- Memuat daftar penyewa... --</option>
                 </select>
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Property Yang Disewa</label>
-                <select id="property_id" class="form-input">
+                <select id="property_id" class="form-input" required>
                     <option value="">-- Memuat daftar property... --</option>
                 </select>
             </div>
@@ -905,6 +905,26 @@
             if (!pin) {
                 alert("Masukkan PIN konfirmasi terlebih dahulu.");
                 document.getElementById('pin').focus();
+                return;
+            }
+
+            const statusVal = document.getElementById('status').value;
+            const penyewaVal = document.getElementById('penyewa_id').value;
+            const propertyVal = document.getElementById('property_id').value;
+
+            if (!statusVal) {
+                alert("Status Kontrak wajib dipilih!");
+                document.getElementById('status').focus();
+                return;
+            }
+            if (!penyewaVal) {
+                alert("Penyewa wajib dipilih!");
+                document.getElementById('penyewa_id').focus();
+                return;
+            }
+            if (!propertyVal) {
+                alert("Property wajib dipilih!");
+                document.getElementById('property_id').focus();
                 return;
             }
 
