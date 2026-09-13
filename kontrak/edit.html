@@ -606,7 +606,10 @@
         function updateContractCalculations() {
             const rawMulai = document.getElementById('mulai').value;
             const rawSelesai = document.getElementById('selesai').value;
-            const nowStr = new Date().toISOString().split('T')[0];
+            
+            // Gunakan tanggal lokal YYYY-MM-DD (bukan ISO/UTC)
+            const now = new Date();
+            const nowStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
             const workDisplay = document.getElementById('workDurationDisplay');
             const remainingDisplay = document.getElementById('remainingContractDisplay');
@@ -630,7 +633,8 @@
 
             // Sisa Masa Kontrak (Hanya jika tanggal selesai tidak kosong)
             if (rawSelesai && remainingDisplay) {
-                const sisa = getTimeDiff(nowStr, rawSelesai, true);
+                // Set addOneDay = false untuk sisa masa kontrak
+                const sisa = getTimeDiff(nowStr, rawSelesai, false);
                 let sisaText = '';
                 if (sisa === "Selesai") {
                     const lewat = getTimeDiff(rawSelesai, nowStr);
