@@ -346,6 +346,65 @@
             }
         }
 
+        // Memuat List Property
+        async function loadPropertyList() {
+            const selectEl = document.getElementById('property_id');
+            try {
+                // Gunakan PARAM_DBID jika ada, fallback ke PARAM_TOKEN jika PARAM_DBID null
+                const queryParam = PARAM_DBID 
+                    ? `type=${encodeURIComponent(PARAM_DBID)}` 
+                    : (PARAM_TOKEN ? `token=${encodeURIComponent(PARAM_TOKEN)}` : '');
+                
+                const res = await fetch(`/api/property?${queryParam}`);
+                const result = await res.json();
+                if (result.success && Array.isArray(result.data)) {
+                    if (result.dbid) PARAM_DBID = result.dbid; // Update PARAM_DBID dari respons API
+                    selectEl.innerHTML = '<option value="">-- Pilih Property --</option>';
+                    result.data.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.id;
+                        opt.textContent = `${item.nama}${item.daerah ? ' (' + item.daerah + ')' : ''}`;
+                        selectEl.appendChild(opt);
+                    });
+                } else {
+                    selectEl.innerHTML = '<option value="">-- Gagal memuat property --</option>';
+                }
+            } catch (e) {
+                console.error('Gagal mengambil daftar property:', e);
+                selectEl.innerHTML = '<option value="">-- Gagal memuat property --</option>';
+            }
+        }
+
+        // Memuat List Penyewa
+        async function loadPenyewaList() {
+            const selectEl = document.getElementById('penyewa_id');
+            try {
+                // Gunakan PARAM_DBID jika ada, fallback ke PARAM_TOKEN jika PARAM_DBID null
+                const queryParam = PARAM_DBID 
+                    ? `type=${encodeURIComponent(PARAM_DBID)}` 
+                    : (PARAM_TOKEN ? `token=${encodeURIComponent(PARAM_TOKEN)}` : '');
+
+                const res = await fetch(`/api/penyewa?${queryParam}`);
+                const result = await res.json();
+                if (result.success && Array.isArray(result.data)) {
+                    if (result.dbid) PARAM_DBID = result.dbid; // Update PARAM_DBID dari respons API
+                    selectEl.innerHTML = '<option value="">-- Pilih Penyewa --</option>';
+                    result.data.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.id;
+                        const labelText = item.nama + (item.pic ? ` (${item.pic})` : '');
+                        opt.textContent = labelText;
+                        selectEl.appendChild(opt);
+                    });
+                } else {
+                    selectEl.innerHTML = '<option value="">-- Gagal memuat penyewa --</option>';
+                }
+            } catch (e) {
+                console.error('Gagal mengambil daftar penyewa:', e);
+                selectEl.innerHTML = '<option value="">-- Gagal memuat penyewa --</option>';
+            }
+        }
+
         function autoExpandTextarea(el) {
             const currentScroll = window.scrollY;
             el.style.height = 'auto';
@@ -939,9 +998,13 @@
                             result.propertyOptions.map(o => `<option value="${o.id}">${o.name}</option>`).join('');
                     }
 
+                    loadPropertyList();
+                    loadPenyewaList();
                     loadSavedPinSession();
                 })
                 .catch(() => {
+                    loadPropertyList();
+                    loadPenyewaList();
                     loadSavedPinSession();
                 });
 
