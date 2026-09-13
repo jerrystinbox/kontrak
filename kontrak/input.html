@@ -42,12 +42,13 @@
     <!-- Form Container -->
     <div class="max-w-2xl mx-auto px-4 mt-4">
         <form id="inputForm" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xl shadow-slate-200/50 space-y-5">
-                <!-- Status Kontrak (Kompak) -->
-                <div class="sm:col-span-8">
+            <!-- Status Kontrak (Kompak) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status Kontrak</label>
-                    <select id="status" class="form-input">
+                    <select id="status" class="form-input" required>
                         <option value="">-- Pilih Status --</option>
-                        <option value="AKTIF" selected>AKTIF</option>
+                        <option value="AKTIF">AKTIF</option>
                         <option value="SELESAI">SELESAI</option>
                         <option value="PERPANJANGAN">PERPANJANGAN</option>
                         <option value="KOSONG">KOSONG</option>
