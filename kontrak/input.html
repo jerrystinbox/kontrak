@@ -305,9 +305,15 @@
         async function loadPropertyList() {
             const selectEl = document.getElementById('property_id');
             try {
-                const res = await fetch(`/api/property?type=${encodeURIComponent(PARAM_DBID)}`);
+                // Gunakan PARAM_DBID jika ada, fallback ke PARAM_TOKEN jika PARAM_DBID null
+                const queryParam = PARAM_DBID 
+                    ? `type=${encodeURIComponent(PARAM_DBID)}` 
+                    : (PARAM_TOKEN ? `token=${encodeURIComponent(PARAM_TOKEN)}` : '');
+                
+                const res = await fetch(`/api/property?${queryParam}`);
                 const result = await res.json();
                 if (result.success && Array.isArray(result.data)) {
+                    if (result.dbid) PARAM_DBID = result.dbid; // Update PARAM_DBID dari respons API
                     selectEl.innerHTML = '<option value="">-- Pilih Property --</option>';
                     result.data.forEach(item => {
                         const opt = document.createElement('option');
@@ -325,12 +331,18 @@
         }
 
         // Memuat List Penyewa
-        async function loadPenyewaList() {
+       async function loadPenyewaList() {
             const selectEl = document.getElementById('penyewa_id');
             try {
-                const res = await fetch(`/api/penyewa?type=${encodeURIComponent(PARAM_DBID)}`);
+                // Gunakan PARAM_DBID jika ada, fallback ke PARAM_TOKEN jika PARAM_DBID null
+                const queryParam = PARAM_DBID 
+                    ? `type=${encodeURIComponent(PARAM_DBID)}` 
+                    : (PARAM_TOKEN ? `token=${encodeURIComponent(PARAM_TOKEN)}` : '');
+
+                const res = await fetch(`/api/penyewa?${queryParam}`);
                 const result = await res.json();
                 if (result.success && Array.isArray(result.data)) {
+                    if (result.dbid) PARAM_DBID = result.dbid; // Update PARAM_DBID dari respons API
                     selectEl.innerHTML = '<option value="">-- Pilih Penyewa --</option>';
                     result.data.forEach(item => {
                         const opt = document.createElement('option');
