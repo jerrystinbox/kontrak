@@ -122,7 +122,8 @@
             <div>
                 <div class="flex items-center justify-between mb-2">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Keterangan / Catatan</label>
-                    <div class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-2.5">
+                        <span id="charCounter" class="text-[11px] font-extrabold text-slate-400">0 / 2000</span>
                         <span id="markdownWarning" class="hidden cursor-help text-xs" title="Teks mengandung format Markdown">⚠️</span>
                         <button type="button" onclick="openMarkdownModal()" class="flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-xl transition-all border border-blue-200/80" title="Petunjuk Format Teks Markdown">
                             <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-blue-600 fill-blue-400"></i>
@@ -134,7 +135,10 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Memo Intern</label>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Memo Intern</label>
+                    <span id="memoCharCounter" class="text-[11px] font-extrabold text-slate-400">0 / 2000</span>
+                </div>
                 <textarea id="memo" rows="2" maxlength="2000" placeholder="Tambahkan memo internal..." class="form-input resize-none overflow-hidden transition-none"></textarea>
             </div>
 
@@ -451,12 +455,49 @@
             }
         }
 
-        // 1. Auto-Expand Textarea
+        // Update Counter Karakter Keterangan & Memo (Diadopsi dari input.html)
+        function updateCharCount() {
+            const keteranganInput = document.getElementById('keterangan');
+            const memoInput = document.getElementById('memo');
+
+            if (keteranganInput) {
+                const count = keteranganInput.value.length;
+                const counterEl = document.getElementById('charCounter');
+                if (counterEl) {
+                    counterEl.textContent = `${count} / 2000`;
+                    if (count >= 2000) {
+                        counterEl.className = "text-[11px] font-extrabold text-rose-600";
+                    } else if (count >= 1800) {
+                        counterEl.className = "text-[11px] font-extrabold text-blue-600";
+                    } else {
+                        counterEl.className = "text-[11px] font-extrabold text-slate-400";
+                    }
+                }
+            }
+
+            if (memoInput) {
+                const count = memoInput.value.length;
+                const counterEl = document.getElementById('memoCharCounter');
+                if (counterEl) {
+                    counterEl.textContent = `${count} / 2000`;
+                    if (count >= 2000) {
+                        counterEl.className = "text-[11px] font-extrabold text-rose-600";
+                    } else if (count >= 1800) {
+                        counterEl.className = "text-[11px] font-extrabold text-blue-600";
+                    } else {
+                        counterEl.className = "text-[11px] font-extrabold text-slate-400";
+                    }
+                }
+            }
+        }
+
+        // 1. Auto-Expand Textarea & Char Counter
         const keteranganInput = document.getElementById('keterangan');
         keteranganInput.addEventListener('input', (e) => {
             isFormDirty = true;
             autoExpandTextarea(e.target);
             checkMarkdownSyntax(e.target.value);
+            updateCharCount();
         });
 
         const memoInput = document.getElementById('memo');
@@ -464,6 +505,7 @@
             isFormDirty = true;
             autoExpandTextarea(e.target);
             checkMarkdownSyntax(e.target.value);
+            updateCharCount();
         });
 
         // --- HELPER DURASI KONTRAK, LAMA GABUNG & UMUR ---
@@ -1131,10 +1173,11 @@
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('editForm').classList.remove('hidden');
 
-                    // Sesuaikan tinggi textarea secara otomatis
+                    // Sesuaikan tinggi textarea secara otomatis & perbarui hitungan karakter awal
                     setTimeout(() => {
                         autoExpandTextarea(document.getElementById('keterangan'));
                         autoExpandTextarea(document.getElementById('memo'));
+                        updateCharCount();
                     }, 100);
                 } else {
                     throw new Error(result.error || "Gagal memuat data untuk diedit");
