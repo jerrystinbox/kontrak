@@ -588,7 +588,9 @@
             const rawMulai = item.mulai || item.tanggal || '';
             const rawSelesai = item.selesai || '';
             const tglMulaiFmt = rawMulai ? formatDateShort(rawMulai) : '-';
-            const nowStr = new Date().toISOString().split('T')[0];
+            
+            const now = new Date();
+            const nowStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
             let periodeSewaText = '';
             let sisaMasaKontrakText = null;
@@ -598,7 +600,7 @@
                 const durasi = getTimeDiff(rawMulai, rawSelesai, true);
                 periodeSewaText = `${tglMulaiFmt} sd ${tglSelesaiFmt} ${durasi && durasi !== '-' ? `(${durasi})` : ''}`;
 
-                const sisa = getTimeDiff(nowStr, rawSelesai, true);
+                const sisa = getTimeDiff(nowStr, rawSelesai, false);
                 if (sisa === "Selesai") {
                     const lewat = getTimeDiff(rawSelesai, nowStr);
                     sisaMasaKontrakText = `Sudah Berakhir ${lewat && lewat !== '-' && lewat !== '0 hari' ? `(lewat ${lewat})` : ''}`;
