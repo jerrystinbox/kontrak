@@ -42,14 +42,7 @@
     <!-- Form Container -->
     <div class="max-w-2xl mx-auto px-4 mt-4">
         <form id="inputForm" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xl shadow-slate-200/50 space-y-5">
-            
-            <!-- ID Rekam & Status Kontrak -->
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-                <div class="sm:col-span-4">
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">ID Rekam (Opsional)</label>
-                    <input type="text" id="rec_id" placeholder="Otomatis / Opsional..." class="form-input">
-                </div>
-            
+                <!-- Status Kontrak (Kompak) -->
                 <div class="sm:col-span-8">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status Kontrak</label>
                     <select id="status" class="form-input">
@@ -311,7 +304,7 @@
         async function loadPropertyList() {
             const selectEl = document.getElementById('property_id');
             try {
-                const res = await fetch(`/api/property?type=${encodeURIComponent(PARAM_DBID || '')}`);
+                const res = await fetch(`/api/property?type=${encodeURIComponent(PARAM_DBID)}`);
                 const result = await res.json();
                 if (result.success && Array.isArray(result.data)) {
                     selectEl.innerHTML = '<option value="">-- Pilih Property --</option>';
@@ -322,10 +315,11 @@
                         selectEl.appendChild(opt);
                     });
                 } else {
-                    selectEl.innerHTML = '<option value="">-- Pilih Property (Opsional) --</option>';
+                    selectEl.innerHTML = '<option value="">-- Gagal memuat property --</option>';
                 }
             } catch (e) {
-                selectEl.innerHTML = '<option value="">-- Pilih Property (Opsional) --</option>';
+                console.error('Gagal mengambil daftar property:', e);
+                selectEl.innerHTML = '<option value="">-- Gagal memuat property --</option>';
             }
         }
 
@@ -333,21 +327,23 @@
         async function loadPenyewaList() {
             const selectEl = document.getElementById('penyewa_id');
             try {
-                const res = await fetch(`/api/penyewa?type=${encodeURIComponent(PARAM_DBID || '')}`);
+                const res = await fetch(`/api/penyewa?type=${encodeURIComponent(PARAM_DBID)}`);
                 const result = await res.json();
                 if (result.success && Array.isArray(result.data)) {
                     selectEl.innerHTML = '<option value="">-- Pilih Penyewa --</option>';
                     result.data.forEach(item => {
                         const opt = document.createElement('option');
                         opt.value = item.id;
-                        opt.textContent = item.nama + (item.pic ? ` (${item.pic})` : '');
+                        const labelText = item.nama + (item.pic ? ` (${item.pic})` : '');
+                        opt.textContent = labelText;
                         selectEl.appendChild(opt);
                     });
                 } else {
-                    selectEl.innerHTML = '<option value="">-- Pilih Penyewa (Opsional) --</option>';
+                    selectEl.innerHTML = '<option value="">-- Gagal memuat penyewa --</option>';
                 }
             } catch (e) {
-                selectEl.innerHTML = '<option value="">-- Pilih Penyewa (Opsional) --</option>';
+                console.error('Gagal mengambil daftar penyewa:', e);
+                selectEl.innerHTML = '<option value="">-- Gagal memuat penyewa --</option>';
             }
         }
 
@@ -721,73 +717,75 @@
                 return;
             }
 
-            if (newFiles.some(f => f.status === 'uploading')) {
-                alert("Mohon tunggu, beberapa berkas masih diunggah!");
+            const isStillUploading = newFiles.some(f => f.status === 'uploading');
+            if (isStillUploading) {
+                alert("Mohon tunggu sebentar, beberapa berkas masih dalam proses pengunggahan!");
                 return;
             }
 
-            if (newFiles.some(f => f.status === 'error')) {
-                alert("Ada berkas gagal diunggah. Hapus dan coba lagi.");
+            const isHasError = newFiles.some(f => f.status === 'error');
+            if (isHasError) {
+                alert("Ada berkas yang gagal diunggah. Silakan hapus berkas tersebut dan coba upload ulang.");
                 return;
             }
 
             btn.disabled = true;
             btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan Data...`;
-            if (typeof lucide !== 'undefined') lucide.createIcons();
+            lucide.createIcons();
 
             try {
                 const newFilesBlobs = newFiles
                     .filter(f => f.uploadMethod === 'blob')
-                    .map(f => ({ name: f.name, url: f.blobUrl, size: f.size }));
-
-                const directFilesList = newFiles.filter(f => f.uploadMethod === 'direct');
+                    .map(f => ({
+                        blobUrl: f.blobUrl,
+                        filename: f.name
+                    }));
 
                 const formData = new FormData();
                 if (PARAM_TOKEN) formData.append('token', PARAM_TOKEN);
                 if (PARAM_DBID) formData.append('dbid', PARAM_DBID);
-
-                formData.append('rec_id', document.getElementById('rec_id').value || '');
-                formData.append('judul', document.getElementById('judul').value || '');
-                formData.append('status', document.getElementById('status').value || '');
-                formData.append('mulai', document.getElementById('mulai').value || '');
-                formData.append('selesai', document.getElementById('selesai').value || '');
-                formData.append('harga_sewa', document.getElementById('harga_sewa').value || '');
-                formData.append('jaminan', document.getElementById('jaminan').value || '');
-                formData.append('keterangan', document.getElementById('keterangan').value || '');
-                formData.append('memo', document.getElementById('memo').value || '');
-                formData.append('penyewa_id', document.getElementById('penyewa_id').value || '');
-                formData.append('property_id', document.getElementById('property_id').value || '');
+                
+                formData.append('judul', document.getElementById('judul').value);
+                formData.append('status', document.getElementById('status').value);
+                formData.append('mulai', document.getElementById('mulai').value);
+                formData.append('selesai', document.getElementById('selesai').value);
+                formData.append('harga_sewa', document.getElementById('harga_sewa').value);
+                formData.append('jaminan', document.getElementById('jaminan').value);
+                formData.append('keterangan', document.getElementById('keterangan').value);
+                formData.append('memo', document.getElementById('memo').value);
+                formData.append('property_id', document.getElementById('property_id').value);
+                formData.append('penyewa_id', document.getElementById('penyewa_id').value);
                 formData.append('pin', pin);
                 formData.append('newFilesBlobs', JSON.stringify(newFilesBlobs));
 
-                directFilesList.forEach(fileObj => {
-                    formData.append('directFiles', fileObj.file, fileObj.name);
+                newFiles.filter(f => f.uploadMethod === 'direct').forEach(f => {
+                    formData.append('directFiles', f.file, f.name);
                 });
 
-                let requestUrl = `${API_MASTER}?action=create`;
-                if (PARAM_TOKEN) requestUrl += `&token=${encodeURIComponent(PARAM_TOKEN)}`;
-                else if (PARAM_DBID) requestUrl += `&dbid=${encodeURIComponent(PARAM_DBID)}`;
+                let requestUrl = API_MASTER;
+                if (PARAM_TOKEN) requestUrl += `?token=${encodeURIComponent(PARAM_TOKEN)}`;
+                else if (PARAM_DBID) requestUrl += `?dbid=${encodeURIComponent(PARAM_DBID)}`;
 
                 const res = await fetch(requestUrl, {
                     method: 'POST',
                     body: formData
                 });
-
+                
                 const result = await res.json();
 
-                if (res.ok && result.success) {
+                if (res.ok) {
                     savePinSession(pin);
                     isFormDirty = false;
-                    showSuccessModal(result.data ? result.data.id : null);
+                    showSuccessModal("Berhasil Disimpan!", "Data rekam baru telah berhasil ditambahkan.");
                 } else {
-                    throw new Error(result.error || "Gagal menyimpan data baru");
+                    alert(result.error || result.message || "Gagal menyimpan data baru (Cek PIN)");
                 }
             } catch (err) {
-                console.error("Submit error:", err);
-                alert(`Error: ${err.message}`);
+                alert("Error: " + err.message);
+            } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                lucide.createIcons();
             }
         };
 
@@ -827,6 +825,21 @@
                 if (pinInput) pinInput.value = storedPin;
             }
         });
+
+        window.onload = () => {
+            // Memuat daftar dropdown
+            loadPropertyList();
+            loadPenyewaList();
+
+            // Auto-fill PIN konfirmasi jika sesi 60 menit masih aktif
+            const storedPin = getStoredPin();
+            if (storedPin) {
+                const pinInput = document.getElementById('pin');
+                if (pinInput) pinInput.value = storedPin;
+            }
+
+            if (window.lucide) lucide.createIcons();
+        };
     </script>
 </body>
 </html>
