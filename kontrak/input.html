@@ -409,7 +409,9 @@
         function updateContractCalculations() {
             const rawMulai = document.getElementById('mulai').value;
             const rawSelesai = document.getElementById('selesai').value;
-            const nowStr = new Date().toISOString().split('T')[0];
+            
+            const now = new Date();
+            const nowStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
             const workDisplay = document.getElementById('workDurationDisplay');
             const remainingDisplay = document.getElementById('remainingContractDisplay');
@@ -433,7 +435,7 @@
 
             // Sisa Masa Kontrak (Hanya jika tanggal selesai tidak kosong)
             if (rawSelesai && remainingDisplay) {
-                const sisa = getTimeDiff(nowStr, rawSelesai, true);
+                const sisa = getTimeDiff(nowStr, rawSelesai, false);
                 let sisaText = '';
                 if (sisa === "Selesai") {
                     const lewat = getTimeDiff(rawSelesai, nowStr);
@@ -549,7 +551,8 @@
         // Set default date to today for 'mulai' & hitung awal
         const mulaiEl = document.getElementById('mulai');
         if (mulaiEl) {
-            mulaiEl.value = new Date().toISOString().split('T')[0];
+            const today = new Date();
+            mulaiEl.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             updateContractCalculations();
         }
 
@@ -1070,7 +1073,8 @@
             document.getElementById('judul').value = '';
             document.getElementById('penyewa_id').value = '';
             document.getElementById('property_id').value = '';
-            document.getElementById('mulai').value = new Date().toISOString().split('T')[0];
+            const today = new Date();
+            document.getElementById('mulai').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             document.getElementById('selesai').value = '';
             document.getElementById('harga_sewa').value = '';
             document.getElementById('jaminan').value = '';
